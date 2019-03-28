@@ -1,0 +1,226 @@
+#title{
+    color: white; 
+}
+#courseListTxt{
+    color: goldenrod; 
+
+}
+.head{
+  height: 100px; ;
+  background-color: rgb(0, 102, 255); 
+  text-align: right; 
+  
+}
+.head h1{
+  padding-top: 44px; 
+  font-size: 55px; 
+  color: white;
+}
+
+.sidenav {
+  height: 100%; 
+  width: 140px;
+  position: fixed;
+  z-index: 1;
+  top: 55px;
+  left: 0px;
+  background: #565a5efd ; 
+  overflow-x: hidden;
+  padding: 8px 0;
+}
+  
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: goldenrod; 
+  display: block;
+   
+}
+  
+.sidenav a:hover {
+  color: white;
+}
+
+#slideshow {
+  
+  width: 70%;
+  height: 240px;
+  padding: 10px;
+  
+}
+  
+#slideshow > div {
+  position: absolute;
+  top: 68%; 
+  left: 40%;
+  right: 40%;
+  bottom: 10px;
+  }
+.footerDiv{
+    position: fixed;
+    bottom:0px;
+    right: 0px; 
+
+}
+  ul#footer li {
+      
+  padding: 20px; 
+  display: inline;
+   
+}
+#downloadBT {
+    position: absolute;
+    top: 56px;
+    right: 0;
+    width: 20%;
+}
+
+.container{
+  height: 100%;
+  align-content: center;
+}
+    
+.card{
+  height: 350px;
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 550px;
+  background-color: gray; 
+}
+    
+.card-header h3{
+  color: white;
+}
+    
+.input-group-prepend span{
+width: 50px;
+background-color: #FFC312;
+color: black;
+border:0 !important;
+  }
+  
+.login_btn{
+  color: black;
+  background-color: #FFC312;
+  width: 100px;
+}
+    
+.links{
+  color: white;
+}
+.links a{
+  margin-left: 4px;
+  color: whitesmoke;
+  }
+.links a:hover{
+   color: goldenrod;
+}
+
+.LoginType button{
+ 
+margin-left: 10px;
+}
+  
+.LoginType{
+position: absolute;
+right: 20px;
+top: 5px;
+}
+
+.sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidebar a {
+  padding: 20px 1px 1px 32px;
+  top: 30px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  color:gold;
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 24px;
+  right: 0;
+  font-size: 36px;
+  margin-right: 50px;
+}
+
+.openbtn {
+  font-size: 20px;
+ 
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  
+  float:right;
+  border-radius: 12px; 
+
+}
+
+.openbtn:hover {
+  background-color:gray;
+}
+
+#mainb {
+  transition: margin-right .5s;
+  padding: 16px;
+  padding-top: 56px; 
+}
+
+.sidebar2 {
+  height: 30%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  bottom: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  
+}
+
+.sidebar2 a {
+  padding: 20px 1px 1px 32px;
+  top: 30px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  overflow-x: hidden;
+  transition: 0.3s;
+}
+
+.sidebar2 a:hover {
+  color:gold;
+}
+
+.sidebar2 .closebtn {
+  position: absolute;
+  top: 24px;
+  right: 0;
+  font-size: 36px;
+  margin-right: 50px;
+}
+#mainc{
+  transition: margin-bottom .5s;
+ 
+}

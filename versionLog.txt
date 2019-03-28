@@ -3,6 +3,56 @@ Project Name: NoteBox
 Members: Brandon Clark, Marlon Moran, Yichun Zhou, Ahmed Mohamed
 Course: CS496
 ---------------------------------------------------------------------------
+VERSION 1.1
+
+CONTRIBUTORS 
+	Brandon Clark, Marlon Moran, Yichun Zhou
+
+COMMITTER
+	Brandon Clark
+
+DATE
+	March 27, 2019
+
+VERSION UPDATE NOTES:
+
+	BRANDON
+		- Created the following functions in functions.php
+			- dbConnect() 
+			- closeConnection()
+			- createSchool($accountUserId, $schoolId)
+			- removeSchool($accountUserId, $schoolId)
+			- showUserSchools($accountUserId)
+			- deleteSchool($schoolId)
+			- createCourse("courseName", "section", $adminUserId, $schoolId)
+			- addCourse($accountUserId, $schoolId, $courseId)
+			- deleteCourse($courseId)
+			- removeCourse($accountUserId, $courseId)
+			- showUserCourses($accountUserId)
+			- deleteCourse()
+			- uploadFile()
+			- deleteFile($filePath)
+			- showNotes($courseId)
+			- retrieveFile($notesId)
+			- downloadFile($notesId) 
+		- Edited Database Tables
+
+	MARLON
+		- Added sidebars to View Notes page
+			- Added download button to right sidebar
+			- Added upload button to left sidebar
+			- Sidebars slide in/out of view when toggle is clicked
+		- Created profile page
+			- Still in progress
+
+	JOE
+		- Redesigned Registration page
+		- Added PHP to Registration page
+		- Added PHP to Login page
+		- Setup session for Login page
+		- Setup session for Registration page 
+
+
 ---------------------------------------------------------------------------
 VERSION 1.0
 
