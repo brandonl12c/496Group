@@ -1,6 +1,8 @@
 <?php
-include 'dbh.php';
-	session_start();
+include 'logfunctions.php';
+dbConnect();
+  session_start();
+  //set uer session
 if(isset($_SESSION['Username'])) {
 	$user = $_SESSION['UserName'];
 
@@ -10,8 +12,15 @@ if(isset($_SESSION['Username'])) {
 	}
 
 ?>
-
+ 
 <!DOCTYPE html>
+
+<style>
+.loginStyle{
+  margin-top: 8%;
+
+}
+</style>
 
 <script>
 function openWinRegistration() {
@@ -44,25 +53,27 @@ function openWinPasswordReset(){
     
 <body>
 
-
+<div class="loginStyle">
   <div class="container">
     <div class="d-flex justify-content-center h-100">
       <div class="card">
         <div class="card-header">
-          <h3>Sign In - User</h3>
+          <h3>Sign In</h3>
+          <!-- user or admin -->
           
-          <div class="d-flex justify-content-end LoginType">
+          <!-- <div class="d-flex justify-content-end LoginType">
             <button type="button" class="btn btn-warning btn-sm" onclick="openWinAdmin()">Admin</button>
             <button type="button" class="btn btn-primary btn-sm" disabled>User</button>
-          </div>
+          </div> -->
         </div>
         <div class="card-body">
-          <form action="accountLoginResult.php" method="POST">
+          <form action="login.php" method="POST">
             <div class="input-group form-group">
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-user"></i></span>
               </div>
-              <input type="text" class="form-control" name="username" placeholder="Username" required="required">
+              <input type="email" class="form-control" name="email" placeholder="Email Address" required="required"
+              value="<?php echo isset($_POST['email']) ? $_POST['email'] : '' ?>">
               
             </div>
             <div class="input-group form-group">
@@ -77,16 +88,26 @@ function openWinPasswordReset(){
           </form>
           
           <p>
+
             <?php
-            $mynotesPage = "myNotes.php";
+            //session isset, user already logged in
+            $mynotesPage = "home.php";
             if(isset($_SESSION['UserName'])){
               echo "Hi ".$_SESSION['UserName'].", You are Logged in. Directing to Mynotes page."; 
-              echo "<meta http-equiv='refresh' content='2; url=$mynotesPage'>";
-            }else{
-              echo "";
+              echo "<meta http-equiv='refresh' content='0; url=$mynotesPage'>";
             }
             ?>
-         </p>
+          
+            <?php  
+              //login email and password check 
+              $password =  $email = "";
+              if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              loginValidation();
+              //check for admin user first then normal user
+              }
+
+            ?>
+          </p>
 
         </div>
         
@@ -101,7 +122,8 @@ function openWinPasswordReset(){
       </div>
     </div>
   </div>
- 
+</div>
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="./jsFiles/bootstrap/bootstrap.bundle.min.js.map"></script>

@@ -4,9 +4,9 @@
 	function dbConnect(){
 				
 		$hostname = "localhost";
-		$dbUsername = "root";
-		$dbPassword = "";
-		$db = "496db";
+		$dbUsername = "496Group";
+		$dbPassword = "cs496Password";
+		$db = "496DB";
 
 		$GLOBALS['connection'] = new mysqli($hostname, $dbUsername, $dbPassword, $db);
 
@@ -237,9 +237,9 @@
 		$query = "SELECT schoolName, acronym FROM school WHERE isDeleted=0";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		
-		while($row = mysqli_fetch_assoc($result){
-			echo "<br>" . $row['schoolName'] . " (" . $row['acronym'] .")";
-		}
+		//while($row = mysqli_fetch_assoc($result){
+		//	echo "<br>" . $row['schoolName'] . " (" . $row['acronym'] .")";
+		//}
 		
 	}
 	
@@ -251,26 +251,88 @@
 		
 	}
 	
-	function showUserCourses($accountUserId){			
-		$query = "SELECT courseId FROM userCourses WHERE accountUserId='$accountUserId' and isDeleted=0"; 
-		$result = mysqli_query($GLOBALS['connection'], $query);
-			
-		while($row = mysqli_fetch_array($result)){
-			echo "courseId: " . $row["courseId"] . "<br>";
-		}	
+	function testPage(){
+		echo "<script>alert('IT WORKS')</script>";
 	}
 	
 	function showUserSchools($accountUserId){			
-		$query = "SELECT courseId FROM userSchools WHERE accountUserId='$accountUserId' and isDeleted=0"; 
+		$query = "	SELECT 
+						school.schoolId, school.schoolName
+					FROM 
+						userSchools 
+					INNER JOIN
+						school
+					ON 
+						userSchools.schoolId=school.schoolId
+					WHERE 
+						userSchools.accountUserId='$accountUserId' AND school.isDeleted=0
+					ORDER BY school.schoolName ASC"; 
 		$result = mysqli_query($GLOBALS['connection'], $query);
 			
-		while($row = mysqli_fetch_array($result)){
-			echo "courseId: " . $row["courseId"] . "<br>";
+		while($row = mysqli_fetch_assoc($result)){
+			echo '<li class="list-group-item" role="button" href="#collapse' . $row['schoolId'] .'" data-toggle="collapse" id="schoolListTxt" ><data value="' . $row['schoolId'] . '">' . $row['schoolName'] . '</li>';
+			showUserCourses($row['schoolId']);
+		}	
+	}
+	
+	function showUserCourses($schoolId){			
+		$query = "	SELECT 
+						course.courseId, course.section
+					FROM 
+						userCourses 
+					INNER JOIN
+						course
+					ON 
+						userCourses.courseId=course.courseId
+					WHERE 
+						course.schoolId='$schoolId' AND course.isDeleted=0
+					ORDER BY course.section ASC"; 
+		$result = mysqli_query($GLOBALS['connection'], $query);
+			
+			
+		echo '	<div class="collapse" id="collapse' . $schoolId .'">';
+		$i = 0;
+		while($row = mysqli_fetch_assoc($result)){
+			echo '<form id="courseForm' . $row['courseId'] . '" action="./viewNotes.php" method="post">';
+			echo '
+				<input type="hidden" name="courseId" value="' . $row['courseId'] . '"/>
+				<a class="dropdown-item" href="javascript:{}" onclick="document.getElementById(\'courseForm' . $row['courseId'] . '\').submit();" id="courseListTxt' . $row['courseId'] . '">	
+					' . $row['section'] . '
+				</a>
+			';
+			echo '</form>';
+			
+			$i++;
+		}	
+		echo '</div>';
+	}
+	
+	function showUserNotes($accountUserId){
+				$query = "	SELECT 
+						note.noteId, note.noteName, note.courseId
+					FROM 
+						userNotes 
+					INNER JOIN
+						note
+					ON 
+						userNotes.noteId=note.noteId
+					WHERE 
+						accountUserId='$accountUserId'"; 
+		$result = mysqli_query($GLOBALS['connection'], $query);
+			
+		while($row = mysqli_fetch_assoc($result)){
+			echo '<form id="noteForm' . $row['noteId'] . '" action="./viewNotes.php" method="post">';
+			echo '
+			<input type="hidden" name="noteId" value="' . $row['noteId'] . '"/>
+			<input type="hidden" name="courseId" value="' . $row['courseId'] . '"/>
+			<li class="list-group-item" href="javascript:{}" onclick="document.getElementById(\'noteForm' . $row['noteId'] . '\').submit();"  id="courseListTxt">' . $row['noteName'] . '</li>';			
+			echo '</form>';
 		}	
 	}
 	
 	function uploadFile(){
 		$accountUserId = 1000000000;
+		$courseId = 4000000000;
 		$fileName = $_FILES['file']['name'];
 		$noteDir = ".\\docs\\";
 		$userDir = $noteDir . $accountUserId;
@@ -301,7 +363,6 @@
 				echo "<script> alert('File : " . $fileName . " Failed to Upload: No Such Directory')</script>";
 			}
 		}
-		$courseId = 4000000000;
 		
 		$query = "SELECT MAX(noteId) AS max FROM note";
 		$result = mysqli_query($GLOBALS['connection'], $query);

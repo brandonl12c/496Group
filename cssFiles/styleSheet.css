@@ -5,6 +5,35 @@
     color: goldenrod; 
 
 }
+
+.card-header{
+	color: goldenrod;
+}
+
+.card-header:hover{
+	color: goldenrod;
+}
+
+.list-group-item{
+    color: goldenrod; 
+}
+
+.list-group-item:hover{
+    color: goldenrod; 
+}
+
+.dropdown-item{
+	color: goldenrod;
+}
+
+.dropdown-item:hover{
+	color: goldenrod;
+}
+
+.list-group {
+  max-height: 69vh;
+  overflow-y: scroll;
+}
 .head{
   height: 100px; ;
   background-color: rgb(0, 102, 255); 
@@ -80,9 +109,9 @@
   height: 100%;
   align-content: center;
 }
-    
+
 .card{
-  height: 350px;
+  height: 70vh;
   margin-top: auto;
   margin-bottom: auto;
   width: 550px;

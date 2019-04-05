@@ -3,6 +3,45 @@ Project Name: NoteBox
 Members: Brandon Clark, Marlon Moran, Yichun Zhou, Ahmed Mohamed
 Course: CS496
 ---------------------------------------------------------------------------
+VERSION 1.2
+
+CONTRIBUTORS 
+	Brandon Clark, Marlon Moran, Yichun Zhou
+
+COMMITTER
+	Brandon Clark
+
+DATE 
+	April 4th, 2019
+
+VERSION UPDATE NOTES:
+
+	Brandon
+		- Added PHP Functionality to AccountUser Homepage
+		- Added Navigation Functionality to Most Webpages
+		- Modified showUserSchools and showUserCourses to echo dropdown items
+		- Created logout.php
+		- Added logout function to homepage 
+
+	Marlon
+		-Created Profile Page 
+		- Modified Homepage to work with PHP
+		- Added upload slide freature.
+		- altered upload to work wth huge drop and drag area
+
+	Joe
+		- Redesigned Login/Registration page
+		- Added the logfunctions page
+                - Added resetPassword page
+                - Added PHP to resetPassword page:
+   
+	Ahmed
+		-
+
+
+
+
+---------------------------------------------------------------------------
 VERSION 1.1
 
 CONTRIBUTORS 

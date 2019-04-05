@@ -10,18 +10,17 @@
 }
 .regStyle{
   margin-top: 5%;
-
 }
+
 .login_btn1{
   color: black;
   background-color: #FFC312;
   width: 50%;
-  margin-left: 120px;
 }
-
-.emailCheck{
-  color: 'goldenrod';
-  margin: '10px';
+.login_btn2{
+  color: black;
+  background-color: #666699;
+  width: 50%;
 }
 
 </style>
@@ -31,8 +30,18 @@ function openWinLogin() {
     window.open("login.php", "_self");
 }
 
-function term_privacy_popup(){
-  alert("Privacy Notice\nThis privacy notice discloses the privacy practices for Notebox website.\nWe only have access to/collect information that you voluntarily give us via email or other direct contact from you. \nWe take precautions to protect your information. Your information is protected both online and offline.\nIf you feel that we are not abiding by this privacy policy, you should contact us immediately.");
+var disableResetBtn = function(){
+  if (document.getElementById('email').value == document.getElementById('RepeatEmail').value) {
+    // document.getElementById("resetPwBtn").disabled = false;
+    document.getElementById('emailCheckMessage').innerHTML = 'Matching';
+    document.getElementById('emailCheckMessage').style.color = 'white';
+    document.getElementById('emailCheckMessage').style.margin = '10px';
+  } else {
+    // document.getElementById("resetPwBtn").disabled = true;
+    document.getElementById('emailCheckMessage').innerHTML = 'Not Matching';
+    document.getElementById('emailCheckMessage').style.color = 'goldenrod';
+    document.getElementById('emailCheckMessage').style.margin = '10px';
+  }
 }
 
 var check = function() {
@@ -61,12 +70,13 @@ var checkLength = function(){
 
 var disableRegBtn = function(){
   if (document.getElementById('password').value == 
-    document.getElementById('Repeatpassword').value && document.getElementById('password').value.length >= 8) {
-    document.getElementById("regBtn").disabled = false;
+    document.getElementById('Repeatpassword').value && document.getElementById('password').value.length >= 8 && document.getElementById('email').value == document.getElementById('RepeatEmail').value) {
+    document.getElementById("resetPwBtn").disabled = false;
   } else {
-    document.getElementById("regBtn").disabled = true;
+    document.getElementById("resetPwBtn").disabled = true;
   }
 }
+// && document.getElementById('username').value != NULL
 
 </script>
 
@@ -74,7 +84,7 @@ var disableRegBtn = function(){
 
   <meta charset="utf-8">
  
-  <title>Notebox Register</title>
+  <title>Reset Password</title>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css.map" >
   <link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css">
@@ -87,29 +97,29 @@ var disableRegBtn = function(){
 <body>
   <?php
     include 'logfunctions.php';
-    dbConnect();
-    $username = $password =  $email = $Repeatpassword = $Fname = $Lname = "";
+    dbConnect();    
+    $username = $email = $RepeatEmail = $password = $Repeatpassword = "";
   ?>
 <div class="regStyle">
   <div class="container">
     <div class="d-flex justify-content-center h-100">
       <div class="card1">
         <div class="card-header">
-          <h3>Register</h3>
+          <h3>Forget your Password?</h3>
           <!-- <div class="d-flex justify-content-end LoginType">
             <button type="button" class="btn btn-warning btn-sm" onclick="openWinAccount()">Already Have an Account?</button>
           </div> -->
         </div>
         <div class="card-body">
 
-          <form action="registration.php" method="POST">
-          <p class="d-flex justify-content-left links"><b>Please fill in this form to create an account.</b></p>
+          <form action="resetPassword.php" method="POST">
+          <p class="d-flex justify-content-left links"><b>Please fill in this form to change your password.</b></p>
 
             <div class="input-group form-group">
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-user"></i></span>
               </div>
-              <input type="text" class="form-control" id="username" name="username" placeholder="Username" required="required" 
+              <input type="text" class="form-control" id="username" name="username" placeholder="Username" required="required" autofocus
               value="<?php echo isset($_POST['username']) ? $_POST['username'] : '' ?>">
             </div>
 
@@ -117,18 +127,25 @@ var disableRegBtn = function(){
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
               </div>
-              <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required="required" 
+              <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required="required" onkeyup ='disableResetBtn(),disableRegBtn();'
               value="<?php echo isset($_POST['email']) ? $_POST['email'] : '' ?>">
-
+              <!-- <span id='emailCheckMessage'> </span> -->
             </div>
 
+            <div class="input-group form-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
+              </div>
+              <input type="email" class="form-control" id="RepeatEmail" name="RepeatEmail" placeholder="Repeat Email" required="required" onkeyup ='disableResetBtn(),disableRegBtn();'
+              value="<?php echo isset($_POST['RepeatEmail']) ? $_POST['RepeatEmail'] : '' ?>">
+              <span id='emailCheckMessage'> </span>
+            </div>
 
             <div class="input-group form-group">
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-key"></i></span>
               </div>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Password" required="required" onkeyup ='checkLength(),check(), disableRegBtn();'   
-              >
+              <input type="password" class="form-control" id="password" name="password" placeholder="New Password" required="required" onkeyup ='checkLength(),check(), disableRegBtn();'   >
               <span id='pwLengthmessage'> </span>
             </div>
 
@@ -136,40 +153,22 @@ var disableRegBtn = function(){
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
               </div>
-              <input type="password" class="form-control" id="Repeatpassword" name="Repeatpassword" placeholder="Repeat password" required="required" onkeyup='checkLength(),check(),disableRegBtn();'>
+              <input type="password" class="form-control" id="Repeatpassword" name="Repeatpassword" placeholder="Repeat New password" required="required" onkeyup='checkLength(),check(),disableRegBtn();'>
               <span id='pwmessage'> </span>
-            </div>
-
-            <div class="input-group form-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-address-card"></i></span>
-              </div>
-              <input type="text" class="form-control" id="Fname" name="Fname" placeholder="(Optional) First name" 
-              value="<?php echo isset($_POST['Fname']) ? $_POST['Fname'] : '' ?>">
-            </div>
-            <div class="input-group form-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-address-card"></i></span>
-              </div>
-              <input type="text" class="form-control" id="Lname" name="Lname" placeholder="(Optional) Last name" 
-              value="<?php echo isset($_POST['Lname']) ? $_POST['Lname'] : '' ?>">
             </div>
 
             <hr>
 
-            <p class="d-flex justify-content-left links">By creating an account you agree to our <a href="#" onclick="term_privacy_popup()"><u><b>Terms & Privacy</b></u></a></p>
-            <p class="d-flex justify-content-left links">Already have an account? <a href="#" onclick="openWinLogin()"><u><b>Sign in</b></u></a>.</p>
-           
             <div class="form-group">
-            
+              <input type="submit" id="resetPwBtn" value="Reset Password" class="btn float-center login_btn1">
+              <input type="button" onclick="openWinLogin();" value="Cancel" class="btn float-right login_btn2">
+
                 <?php
                   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                      registration();
+                    restPw();
                     }
                 ?> 
 
-              <input type="submit" id="regBtn" value="Register" class="btn  login_btn1">
-           
             </div>
 
           </form>
