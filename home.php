@@ -5,12 +5,10 @@
 	include 'functions.php';
 	dbConnect(); 
 	session_start();
-	//SESSION INFORMATION HERE
-	/*Need
-		userId
-		userType
-	*/
-	$_SESSION['userId'] = 1000000000;
+	
+	if(!isset($_SESSION['userId'])){
+		header('Location: ' . "./");
+	}
 	
 	?>
   <meta charset="utf-8">
@@ -74,7 +72,7 @@
               <a class="dropdown-item" href="#">FAQ</a>
               <div class="dropdown-divider"></div>
 
-              <a class="dropdown-item" href="./logout.php" >Logout</a>
+              <a class="dropdown-item" href="#" >Logout</a>
             </div>
           </li>
         </ul>

@@ -4,9 +4,9 @@
 	function dbConnect(){
 				
 		$hostname = "localhost";
-		$dbUsername = "496Group";
-		$dbPassword = "cs496Password";
-		$db = "496DB";
+		$dbUsername = "root";
+		$dbPassword = "";
+		$db = "496db";
 
 		$GLOBALS['connection'] = new mysqli($hostname, $dbUsername, $dbPassword, $db);
 
@@ -19,7 +19,7 @@
 	}
 	
 	function closeConnection(){
-		$GLOBALS['connection'];
+		mysqli_close($GLOBALS['connection']);
 	}
 
 	function removeCourse($accountUserId, $courseId){

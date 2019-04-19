@@ -2,23 +2,21 @@
 include 'logfunctions.php';
 dbConnect();
   session_start();
-  //set uer session
-if(isset($_SESSION['Username'])) {
-	$user = $_SESSION['UserName'];
-
+  //set user session with userId
+if(isset($_SESSION['userId'])) {
+	$userId = $_SESSION['userId'];
 	}else {
 		$user = null;
 
 	}
 
 ?>
- 
+  
 <!DOCTYPE html>
 
 <style>
 .loginStyle{
   margin-top: 8%;
-
 }
 </style>
 
@@ -87,15 +85,10 @@ function openWinPasswordReset(){
             </div>
           </form>
           
-          <p>
+          <p style="color:goldenrod; font-size:30px;">
 
             <?php
-            //session isset, user already logged in
-            $mynotesPage = "home.php";
-            if(isset($_SESSION['UserName'])){
-              echo "Hi ".$_SESSION['UserName'].", You are Logged in. Directing to Mynotes page."; 
-              echo "<meta http-equiv='refresh' content='0; url=$mynotesPage'>";
-            }
+            get_userName_loginPage();
             ?>
           
             <?php  
