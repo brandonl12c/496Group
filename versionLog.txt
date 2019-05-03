@@ -3,6 +3,23 @@ Project Name: NoteBox
 Members: Brandon Clark, Marlon Moran, Yichun Zhou, Ahmed Mohamed
 Course: CS496
 ---------------------------------------------------------------------------
+VERSION 1.4.1
+
+CONTRIBUTORS
+        Brandon Clark, Marlon Moran, Yichun Zhou, Ahmed Mohamed
+
+COMMITTER
+        Brandon Clark
+
+DATE
+        May 3rd, 2019
+
+VERSION UPDATE NOTES:
+
+        Brandon
+		- Added README file
+		- Added comments to the functions.php file
+---------------------------------------------------------------------------
 VERSION 1.4
 
 CONTRIBUTORS

@@ -95,14 +95,17 @@ ALL FUNCTIONS UNDER THIS LINE
 */
 
 	function dbConnect(){
-				
+		
+		//sets variables for the database connection
 		$hostname = "localhost";
 		$dbUsername = "root";
 		$dbPassword = "";
 		$db = "496db";
 
+		//Establishes new mysqli connection and saves that connection as a global variable
 		$GLOBALS['connection'] = new mysqli($hostname, $dbUsername, $dbPassword, $db);
 
+		//Checks to make sure the connection was established
 		if (!$GLOBALS['connection']){
 			echo '<script>';
 			echo 'alert("message unsuccessfully sent")';
@@ -112,19 +115,25 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 
 	function user_logout(){
+		
+		//unsets all session variables, destroys the session and redirects
 		session_unset(); 
 		session_destroy(); 
 		header("location: index.php");
 	}
 	
 	function closeConnection(){
+		//closes the global db connection
 		mysqli_close($GLOBALS['connection']);
 	}
 
 	function removeCourse(){
+		
+		//Retrieves data for query
 		$accountUserId = $_SESSION['userId'];
 		$favCourseId = $_POST['favCourseId'];
 
+		//Query to find the course in userCourses and also get the associated school id
 		$query = "	SELECT
 						schoolId
 					FROM
@@ -139,12 +148,16 @@ ALL FUNCTIONS UNDER THIS LINE
 		
 		echo $schoolId;
 		
+		//query to delete the course from userCourses
 		$query = "DELETE FROM userCourses WHERE accountUserId='$accountUserId' AND favCourseId='$favCourseId'"; 
 		
 		if(!mysqli_query($GLOBALS['connection'], $query)){
 				die(mysqli_error($GLOBALS['connection']));
 		}
 		
+		//query to see if the schoolId exists for the current user in the userCourses
+		//If so, it redirect back to home
+		//Otherwise, the schoolId is removed from userSchools for the current user
 		$query = "	SELECT
 						schoolId
 					FROM
@@ -167,12 +180,16 @@ ALL FUNCTIONS UNDER THIS LINE
 	}		
 	
 	function removeSchool($accountUserId, $schoolId){
+		
+		//makes sure all userCourses are removed for the selected school
 		$query = "DELETE FROM userCourses WHERE accountUserId='$accountUserId' AND schoolId='$schoolId'"; 
 		
 		if(!mysqli_query($GLOBALS['connection'], $query)){
 				die(mysqli_error($GLOBALS['connection']));
 		}
 		
+		//deletes the school from userSchools for current user
+		//Then redirects to home
 		$query = "DELETE FROM userSchools WHERE accountUserId='$accountUserId' AND schoolId='$schoolId'"; 
 
 		if(!mysqli_query($GLOBALS['connection'], $query)){
@@ -186,7 +203,9 @@ ALL FUNCTIONS UNDER THIS LINE
 
 	function addCourse(){
 		
-
+		//Checks to make sure all necessary data has been properly set in POST and SESSION
+		//alerts error and redirects if not
+		//otherwise, the data is stored in the appropriate varaibles
 		if(isset($_SESSION['userId']) && isset($_POST['addC_Sch_selection']) && isset($_POST['addC_Course_selection'])){
 			$accountUserId = $_SESSION['userId'];
 			$schoolId = $_POST['addC_Sch_selection'];
@@ -198,6 +217,8 @@ ALL FUNCTIONS UNDER THIS LINE
 					</script>");
 		}
 		
+		//Checks to make sure the accountUser exists in the database
+		//Just an extra layer to catch errors
 		$query = "SELECT userId FROM accountUser WHERE userId='$accountUserId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -210,6 +231,7 @@ ALL FUNCTIONS UNDER THIS LINE
 					</script>");
 		}
 		
+		//Checks to see if the school exists in the school table and has not been soft deleted
 		$query = "SELECT schoolId FROM school WHERE schoolId='$schoolId' and isDeleted=0";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -221,6 +243,7 @@ ALL FUNCTIONS UNDER THIS LINE
 					</script>");
 		}
 		
+		//Checks to see if the course exists in the course table and has not been soft deleted
 		$query = "SELECT courseId FROM course WHERE courseId='$courseId' and isDeleted=0";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -231,7 +254,8 @@ ALL FUNCTIONS UNDER THIS LINE
 						window.location.href = './home.php';
 					</script>");
 		}
-		
+
+		//Checks to see if the course exists in the userCourses table
 		$query = "SELECT courseId FROM userCourses WHERE courseId='$courseId' AND accountUserId = '$accountUserId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -243,6 +267,9 @@ ALL FUNCTIONS UNDER THIS LINE
 					</script>");
 		}
 		
+		//Checks to see if the schoolId exists in the userSchools table for the current user
+		//If not, then the school is added to userSchools for the current account user
+		//Otherwise nothing
 		$query = "SELECT schoolId FROM userSchools WHERE schoolId='$schoolId' AND accountUserId = '$accountUserId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -257,6 +284,9 @@ ALL FUNCTIONS UNDER THIS LINE
 			}
 		}
 		
+		
+		//Adds the course is added to userCourses for the current account user
+		//Then redirects to home
 		$query = "INSERT INTO userCourses
 					(accountUserId, schoolId, courseId)
 				  VALUES
@@ -271,6 +301,8 @@ ALL FUNCTIONS UNDER THIS LINE
 	
 	function addSchool($accountUserId, $schoolId){
 		
+		//Checks to see if the user exists in the accountUser table
+		//If not, an error alert is shown
 		$query = "SELECT userId FROM accountUser WHERE userId='$accountUserId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -280,6 +312,8 @@ ALL FUNCTIONS UNDER THIS LINE
 			exit("<script>alert('Account User Does Not Exist!')</script>");
 		}
 		
+		//Checks to see if the school exists in the school table
+		//If not, an error alert is shown
 		$query = "SELECT schoolId FROM school WHERE schoolId='$schoolId' and isDeleted=0";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -288,6 +322,9 @@ ALL FUNCTIONS UNDER THIS LINE
 			exit("<script>alert('School Does Not Exist!')</script>");
 		}
 		
+		//Checks to see if the school already exists in userSchools
+		//If so, an error alert is shown
+		//Otherwise, a query is run to insert the school into userSchools
 		$query = "SELECT schoolId FROM userSchools WHERE schoolId='$schoolId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -308,11 +345,15 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 	
 	function createCourse(){
+		
+		//Retrieves and stores approprate data
 		$schoolName = $_POST['sName'];
 		$courseName = $_POST['cName'];
 		$courseSection = $_POST['section'];
 		$adminUserId = $_SESSION['adminId']; 
 		
+		//Checks to see if the school exists in the database
+		//If not, the admin user is redirected back to the admin home
 		$query = "SELECT * FROM school WHERE schoolName='$schoolName' AND isDeleted=0";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -322,53 +363,62 @@ ALL FUNCTIONS UNDER THIS LINE
 			echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
 		}
 
-			$query = "SELECT courseName FROM course WHERE courseName='$courseName' AND schoolId = '$schoolId' AND isDeleted=0";
+		//Checks to see if the course already exists. 
+		//If so, the admin user is redirected back to the admin home
+		$query = "SELECT courseName FROM course WHERE courseName='$courseName' AND schoolId = '$schoolId' AND isDeleted=0";
+		$result = mysqli_query($GLOBALS['connection'], $query);
+		$row = mysqli_fetch_array($result);
+		$query1 = "SELECT courseName FROM course WHERE section='$courseSection' AND schoolId = '$schoolId' AND isDeleted=0";
+		$result1 = mysqli_query($GLOBALS['connection'], $query1);
+		$row1 = mysqli_fetch_array($result1);
+		if($row['courseName'] != null || $row1['courseName'] != null){
+			echo "<script>alert('Course Already Exists!')</script>";
+			echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
+		}else{
+			
+			//If the course does exist but has been previously soft deleted the
+			//	the isDeleted value is set back to 1
+			//This essentialy undos the soft delete and redirects the admin user
+			$query = "SELECT courseName FROM course WHERE courseName ='$courseName' AND isDeleted=1";
 			$result = mysqli_query($GLOBALS['connection'], $query);
 			$row = mysqli_fetch_array($result);
-			$query1 = "SELECT courseName FROM course WHERE section='$courseSection' AND schoolId = '$schoolId' AND isDeleted=0";
-			$result1 = mysqli_query($GLOBALS['connection'], $query1);
-			$row1 = mysqli_fetch_array($result1);
-			if($row['courseName'] != null || $row1['courseName'] != null){
-				echo "<script>alert('Course Already Exists!')</script>";
+			if($row['courseName'] != null){
+				$query = 	"UPDATE course
+				SET isDeleted=0
+				WHERE courseName='$courseName'";
+				$result = mysqli_query($GLOBALS['connection'], $query);
 				echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
-			}else{
-
-				$query = "SELECT courseName FROM course WHERE courseName ='$courseName' AND isDeleted=1";
-				$result = mysqli_query($GLOBALS['connection'], $query);
-				$row = mysqli_fetch_array($result);
-				if($row['courseName'] != null){
-					$query = 	"UPDATE course
-					SET isDeleted=0
-					WHERE courseName='$courseName'";
-					$result = mysqli_query($GLOBALS['connection'], $query);
-					echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
-				}
-				
-				$query = "SELECT MAX(courseId) AS courseId FROM course";
-				$result = mysqli_query($GLOBALS['connection'], $query);
-				$row = mysqli_fetch_array($result);
-				
-				$courseId = $row['courseId'];
-				
-				if($courseId != Null){
-					$courseId += 1;
-				}else{
-					$courseId = 4000000000;
-				}
-
-				$query = "INSERT INTO course
-							(courseId, schoolId, courseName, section, adminUserId) 
-							VALUES 
-							('$courseId', '$schoolId', '$courseName', '$courseSection', '$adminUserId')";
-							
-				if(!mysqli_query($GLOBALS['connection'], $query)){
-					die(mysqli_error($GLOBALS['connection']));
-				}
 			}
+			
+			//If the course does not exist at all, the max id is retrieved from the database
+			//	and then incremented.
+			$query = "SELECT MAX(courseId) AS courseId FROM course";
+			$result = mysqli_query($GLOBALS['connection'], $query);
+			$row = mysqli_fetch_array($result);
+			
+			$courseId = $row['courseId'];
+			
+			if($courseId != Null){
+				$courseId += 1;
+			}else{
+				$courseId = 4000000000;
+			}
+
+			//Inserts the course into the course table with the previously set data
+			$query = "INSERT INTO course
+						(courseId, schoolId, courseName, section, adminUserId) 
+						VALUES 
+						('$courseId', '$schoolId', '$courseName', '$courseSection', '$adminUserId')";
+						
+			if(!mysqli_query($GLOBALS['connection'], $query)){
+				die(mysqli_error($GLOBALS['connection']));
+			}
+		}
 	}
 	
 	function createSchool(){
 		
+		//Retrieves and stores approprate data
 		$schoolName = $_POST['sName'];
 		$acronym = $_POST['acronym'];
 		$adminUserId = $_SESSION['adminId'];
@@ -377,10 +427,12 @@ ALL FUNCTIONS UNDER THIS LINE
 		$row = mysqli_fetch_array($result);
 		$adminUserId = $row['userId']; 
 		
+		//makes sure adminUserId has been set
 		if($adminUserId == null){
 			exit("<script>alert('Admin User Does Not Exist!')</script>");
 		}
 		
+		//Checks to see if the school already exists in school
 		$query = "SELECT schoolName FROM school WHERE schoolName='$schoolName' AND isDeleted=0";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -389,6 +441,8 @@ ALL FUNCTIONS UNDER THIS LINE
 			exit("<script>alert('School Already Exists!')</script>");
 		}
 
+		//Checks to see if school exists but has been previously soft deleted
+		//If so, the soft delete is undone and the user is redirected to admin home
 		$query = "SELECT schoolName FROM school WHERE schoolName='$schoolName' AND isDeleted=1";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -400,6 +454,7 @@ ALL FUNCTIONS UNDER THIS LINE
 			echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
 		}
 		
+		//If the school does not exist at all, the max id is retrieved from school and incremented
 		$query = "SELECT MAX(schoolId) AS schoolId FROM school";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -412,6 +467,7 @@ ALL FUNCTIONS UNDER THIS LINE
 			$schoolId = 3000000000;
 		}
 
+		//Inserts the new school into school
 		$query = "INSERT INTO school
 					(schoolId, schoolName, acronym, adminUserId) 
 					VALUES 
@@ -422,21 +478,10 @@ ALL FUNCTIONS UNDER THIS LINE
 		}
 		
 	}
-	
-	function showSchools(){
-		$query = "SELECT schoolName, acronym FROM school WHERE isDeleted=0";
-		$result = mysqli_query($GLOBALS['connection'], $query);
 		
-		//while($row = mysqli_fetch_assoc($result){
-		//	echo "<br>" . $row['schoolName'] . " (" . $row['acronym'] .")";
-		//}
-		
-	}
-	
-	function showCourses(){
-	}
-	
 	function showNotes($courseId){
+		
+		//Retrieves all notes for the selected courseId
 		$query = "	SELECT 
 						*
 					FROM
@@ -446,6 +491,7 @@ ALL FUNCTIONS UNDER THIS LINE
 				";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		
+		//iterates through the query results and echoes out forms for each note
 		while($row = mysqli_fetch_assoc($result)){
 			$noteId = $row['noteId'];
 			$filePath = retrieveFile($noteId);
@@ -465,6 +511,8 @@ ALL FUNCTIONS UNDER THIS LINE
 	function showMyNotes(){
 		
 		$userId = $_SESSION['userId'];
+		
+		//Retrieves all notes for the current user
 		$query = "	SELECT 
 						noteId, noteName
 					FROM
@@ -474,6 +522,8 @@ ALL FUNCTIONS UNDER THIS LINE
 				";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		
+		//iterates through the query results and echoes out forms for each note
+		//	as well as a delete form
 		while($row = mysqli_fetch_assoc($result)){
 			$noteId = $row['noteId'];
 			
@@ -492,11 +542,9 @@ ALL FUNCTIONS UNDER THIS LINE
 		}
 	}
 	
-	function testPage(){
-		echo "<script>alert('IT WORKS')</script>";
-	}
-	
-	function showUserSchools($accountUserId){			
+	function showUserSchools($accountUserId){	
+
+		//Query to find all schools that the user has favorited
 		$query = "	SELECT 
 						school.schoolId, school.schoolName
 					FROM 
@@ -510,6 +558,8 @@ ALL FUNCTIONS UNDER THIS LINE
 					ORDER BY school.schoolName ASC"; 
 		$result = mysqli_query($GLOBALS['connection'], $query);
 			
+		//iterates through the results and creates a list/dropdown toggle item for each school
+		//calls function to get userCourses for each school
 		while($row = mysqli_fetch_assoc($result)){
 			echo '<li class="list-group-item" role="button" href="#collapse' . $row['schoolId'] .'" data-toggle="collapse" id="schoolListTxt" ><data value="' . $row['schoolId'] . '">' . $row['schoolName'] . '</li>';
 			showUserCourses($row['schoolId']);
@@ -519,6 +569,7 @@ ALL FUNCTIONS UNDER THIS LINE
 	function showUserCourses($schoolId){			
 		$userId = $_SESSION['userId'];
 	
+		//Query to find all courses that the user has favorited
 		$query = "	SELECT 
 						course.courseId, course.section, userCourses.favCourseId
 					FROM 
@@ -537,6 +588,7 @@ ALL FUNCTIONS UNDER THIS LINE
 			
 		echo '	<div class="collapse" id="collapse' . $schoolId .'">';
 
+		//iterates through the results and creates a form/dropdown item for each course
 		while($row = mysqli_fetch_assoc($result)){
 			echo '	<form class="userCourseForm" id="courseForm' . $row['courseId'] . '" action="./viewNotes.php" method="post">';
 			echo '
@@ -562,6 +614,8 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 	
 	function showUserNotes($accountUserId){
+		
+		//Query to find all courses that the user has favorited
 				$query = "	SELECT 
 						note.noteId, note.noteName, note.courseId
 					FROM 
@@ -574,6 +628,7 @@ ALL FUNCTIONS UNDER THIS LINE
 						userNotes.accountUserId='$accountUserId'"; 
 		$result = mysqli_query($GLOBALS['connection'], $query);
 			
+		//iterates through the results and creates a form for each note
 		while($row = mysqli_fetch_assoc($result)){
 			echo '<form id="noteForm' . $row['noteId'] . '" action="./viewNotes.php" method="post">';
 			echo '
@@ -585,6 +640,8 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 	
 	function uploadFile(){
+		
+		//Retrieves and sets all appropriate data
 		$accountUserId = $_SESSION['userId'];
 		$courseId = $_POST['courseId'];
 		$fileName = $_FILES['file']['name']; 
@@ -601,23 +658,28 @@ ALL FUNCTIONS UNDER THIS LINE
 							"ico", "html", "htm", "xhtml", "php",
 							"js", "css", "ppt", "pptx");
 			
-			
+		//checks to see if the filetype is in the whitelist
 		$accept = in_array($fileType, $whiteList);
 		
+		//sends alert if file extension is not white listed
 		if(!$accept){
 			exit("<script> alert('Extension Type Not Allowed: " . $fileType . "')</script>");
 		}
 		
+		//sends alert if the file already exists
 		if(file_exists($newFilePath)){
 			exit("<script> alert('File Already Exists!')</script>");
 		}
 		
+		//Sends alert if the specified directory does not exist
 		if(!is_dir($userDir)){
 			if(!mkdir($userDir)){
 				echo "<script> alert('File : " . $fileName . " Failed to Upload: No Such Directory')</script>";
 			}
 		}
 		
+		//attempts to transfer the file to the server and if it is successful
+		//	 a query is ran to store all file information in the database
 		if(move_uploaded_file($_FILES['file']['tmp_name'], $newFilePath)){
 			
 			
@@ -646,19 +708,21 @@ ALL FUNCTIONS UNDER THIS LINE
 	
 	function deleteFile($fileId){
 
+		//query to find all necessary information of the specified note
 		$query = "SELECT accountUserId, noteName, dataType FROM note WHERE noteId='$fileId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
 		
+		//all appropriate variables are set
 		$accountUserId = $row['accountUserId'];
 		$fileName = $row['noteName'];
 		$dataType = $row['dataType'];
 
-
+		//establishes the file path based on retrieved data
 		$filePath = ".\\docs\\" . $accountUserId . "\\" . $fileName . "." . $dataType ;
 		
-
-		
+		//If the files does not exists, an alert is sent
+		//Otherwise the file is removed and the database is updated respectively
 		if(!unlink($filePath)){
 			echo "File Does Not Exist";
 		}else{
@@ -677,14 +741,17 @@ ALL FUNCTIONS UNDER THIS LINE
 	
 	function retrieveFile($fileId){
 		
+		//retrieves all necessary information from the database for the specified note
 		$query = "SELECT accountUserId, noteName, dataType FROM note WHERE noteId='$fileId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
 		
+		//sets the appropriate variables
 		$accountUserId = $row['accountUserId'];
 		$fileName = $row['noteName'];
 		$fileType = $row['dataType'];
 
+		//establishes the file path
 		$filePath = $accountUserId . "\\" . $fileName . "." . $fileType;
 		
 		return $filePath;
@@ -693,12 +760,10 @@ ALL FUNCTIONS UNDER THIS LINE
 	
 	function downloadFile(){
 
-		$fileId = $_POST['noteId'];
-
-		//$filePath = ".\\docs\\1000000000\\EmploymentOpportunitywithDRES.pdf";
-		
+		$fileId = $_POST['noteId'];		
 		$filePath = ".\\docs\\" . retrieveFile($fileId);
 		
+		//necessary header files to perform the download operation
 	    header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment; filename="'.basename($filePath).'"');
@@ -711,8 +776,14 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 	
 	function deleteSchool(){
+		
 		$schoolName = $_POST['sName1'];
+		
+		//query to see if school exists in database
+		//if not, an error is thrown
+		//otherwise the school is soft deleted
 		$query = "SELECT * FROM school WHERE schoolName = '$schoolName' "; 
+		
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		if (mysqli_num_rows($result) == 0) {
 			echo "<script>alert('No School Match in DataBase')</script>";
@@ -726,8 +797,12 @@ ALL FUNCTIONS UNDER THIS LINE
 	function deleteCourse(){
 		$schoolName = $_POST['sName1'];
 		$courseName = $_POST['cName1'];
+		
+		//query to find the school information
 		$query = "SELECT * FROM school WHERE acronym = '$schoolName' "; 
 		$result = mysqli_query($GLOBALS['connection'], $query);
+		
+		//query to find all course information
 		$query1 = "SELECT * FROM course WHERE section = '$courseName' "; 
 		$result1 = mysqli_query($GLOBALS['connection'], $query1);
 		if (mysqli_num_rows($result) == 0 ||mysqli_num_rows($result1) == 0) {
@@ -744,18 +819,22 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 	
 	function submitTicket(){
+		
+		//Retrieves and sets all appropriate data
 		$accountUserId = $_SESSION['userId'];
-		//$accountUserId = 1000000000;
 		$ticketContent = $_POST['ticketContent'];
 		$ticketType = $_POST['ticketType'];
 		$ticketTopic = $_POST['ticketTopic'];
 		
+		//Query to insert new ticket into database
 		$query = "	INSERT INTO ticket
 						(`accountUserId`, `ticketType`, `ticketTopic`, `ticketContent`)
 					VALUES
 						('$accountUserId', '$ticketType', '$ticketTopic', '$ticketContent')
 		";
 		
+		//Runs query and if the successful, an success alert is showNotes
+		//otherwise an error is thrown
 		if(mysqli_query($GLOBALS['connection'], $query)){
 			echo "	<script>
 						alert('Ticket Submitted');
@@ -767,6 +846,8 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 
 	function getCourseSection($courseId){
+		
+		//Query to return the course section for the specified courseId
 		$query = "	SELECT 
 						section
 					FROM
@@ -782,10 +863,13 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 
 	function listCourses(){
+		//Retrieves and sets all appropriate data
 		$schoolId = $_POST['listCourses'];
 		$courses = array();
 		$code = "";
 		
+		//Query to retrieve the courses information for a school
+		//The results are outputted as options for a select list
 		$query = "SELECT * FROM course WHERE schoolId='$schoolId' AND isDeleted = 0 "; 
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		if (mysqli_num_rows($result) != 0) {
@@ -798,6 +882,7 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 
 	function listCrs_admin(){
+		
 		$C_query = "SELECT * FROM course WHERE isDeleted = 0 "; 
 		$C_query_result = mysqli_query($GLOBALS['connection'], $C_query);
 		if (mysqli_num_rows($C_query_result) == 0) {
@@ -819,6 +904,8 @@ ALL FUNCTIONS UNDER THIS LINE
 		$schools = array();
 		$code = "";
 		
+		//Query to retrieve the school information for all schools
+		//The results are outputted as options for a select list
 		$query = "SELECT * FROM school WHERE isDeleted = 0 "; 
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		
@@ -850,6 +937,7 @@ ALL FUNCTIONS UNDER THIS LINE
 	function getNoteName(){
 		$noteId = $_POST['noteId'];
 		
+		//Query to get note name from noteId 
 		$query = "	SELECT
 						noteName
 					FROM
@@ -867,6 +955,7 @@ ALL FUNCTIONS UNDER THIS LINE
 	function getNotePath(){
 		$noteId = $_POST['noteId'];
 		
+		//Query to get note path from noteId 
 		$query = "	SELECT
 						*
 					FROM
@@ -884,6 +973,7 @@ ALL FUNCTIONS UNDER THIS LINE
 	function getMyFirstNote(){
 		$userId = $_SESSION['userId'];
 		
+		//Query to retrieve the first note in the list for the user's notes
 		$query = "	SELECT
 						noteId
 					FROM
@@ -897,7 +987,9 @@ ALL FUNCTIONS UNDER THIS LINE
 		return $row['noteId'];
 	}
 	
-	function getFirstNote($courseId){		
+	function getFirstNote($courseId){
+		
+		//Query to retrieve the first note in the list for the selected course	
 		$query = "	SELECT
 						*
 					FROM
@@ -915,6 +1007,7 @@ ALL FUNCTIONS UNDER THIS LINE
 		
 		$noteId = $_POST['noteId'];
 		
+		//query to list all comments and commentor info for the current note
 		$query = "	SELECT
 						comment.comment AS comment, accountUser.userName AS userName
 					FROM
@@ -933,6 +1026,7 @@ ALL FUNCTIONS UNDER THIS LINE
 		
 		while($row = mysqli_fetch_assoc($result)){
 				
+		//Outputs comments and commentor info in a list
 		echo '	<li>
 					<div class="commentTxt">
 						<p class="userComments">'.$row['comment'].'</p> <span class="user sub-text">-'.$row['userName'].'</span>
@@ -945,12 +1039,16 @@ ALL FUNCTIONS UNDER THIS LINE
 	}
 	
 	function submitComment(){
+		
+		//Retrieves and sets all appropriate data
 		$newComment = $_POST['commentText'];
 		$userId = $_SESSION['userId'];
 		$noteId = $_POST['noteId'];
 		$courseId = $_POST['courseId'];
 		$date = date("y-m-d h:i:s");
 		
+		//query to insert the new comment into the comment table
+		//	with the associated note id
 		$query = "	INSERT INTO
 						comment(`accountUserId`,`noteId`,`comment`, `date_time`)
 					VALUES
@@ -962,6 +1060,7 @@ ALL FUNCTIONS UNDER THIS LINE
 			die(mysqli_error($GLOBALS['connection']));
 		}
 		
+		//uses temporary session variables to reload the previous viewNotes/myNotes page
 		$_SESSION['noteId'] = $noteId;
 		$_SESSION['courseId'] = $courseId;
 		header("Location: " . $_SERVER['HTTP_REFERER']);
