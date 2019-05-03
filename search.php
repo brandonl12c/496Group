@@ -1,59 +1,53 @@
 <!DOCTYPE html>
 
 <head>
-	<?php 
-	include 'functions.php';
-	dbConnect();
 
-	if(isset($_SESSION['userId'])) {
-	$userId = $_SESSION['userId'];
-	}else {
-	  $user = null;
-	  header('Location: ' . "./");
-	}
-	?>
-	<meta charset="utf-8">
-
-	<title>User Home</title>
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-	<link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css.map" >
-	<link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css">
-	<link href="./cssFiles/styleSheet.css" rel="stylesheet">
-
-	<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="./jsFiles/bootstrap/bootstrap.bundle.min.js.map"></script>
-	<script src="./jsFiles/bootstrap/bootstrap.bundle.js.map"></script>
-	<script src="./jsFiles/bootstrap/bootstrap.js"></script>
+    <meta charset="utf-8">
+    <?php include "functions.php"; dbConnect();
+    ?>
+    <title>Search Result</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css.map">
+    <link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css">
+    <link href="./cssFiles/styleSheet.css" rel="stylesheet">
+	
+	
 
 </head>
 
-    
-<body >
-       <nav class="navbar navbar-expand navbar-dark bg-secondary fixed-top">
+
+<body>
+    <!--Top navigation part-->
+<nav class="navbar navbar-expand navbar-dark bg-secondary fixed-top">
 
         <a class="navbar-brand mr-2"  id="title">NoteBox</a>
         <form class="form-inline">
                 <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                          <a class="nav-link" href="./home.php" style="background-color:goldenrod;">Home <span class="sr-only">(current)</span></a>
+                          <a class="nav-link" href="./home.php" >Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item active">
                                 <a class="nav-link" href="myNotes.php">MyNotes <span class="sr-only">(current)</span></a>
                               </li>
                               <li class="nav-item active">
-                                    <a class="nav-link" href="#">Favorites<span class="sr-only">(current)</span></a>
+                                    <a class="nav-link" href="#" style="background-color:goldenrod;">Search<span class="sr-only">(current)</span></a>
                                   </li>
                         </ul>
         </form>
 
-        <!--  -->
-        <!-- search form -->
         <script>
           function search_validate(){
             var search_input = document.forms["search_form"]["search_keyword"].value;
               if(search_input == ""){
-                alert("Please Enter a Keyword for search");
+                alert("Please Enter a Keyword");
+                return false;
+                // window.location.replace("home.php");
+              }
+          }
+          function search_validate2(){
+            var search_input = document.forms["search_form2"]["searchPage_search_input"].value;
+              if(search_input == ""){
+                alert("Please Enter a Keyword");
                 return false;
                 // window.location.replace("home.php");
               }
@@ -69,15 +63,6 @@
             </div>
           </div>
         </form>
-
-        <script>
-
-        </script>
-
-        <style>
-
-        </style>
-
     
         <ul class="navbar-nav ml-auto ml-md-0">
           <li class="nav-item dropdown no-arrow mx-1">
@@ -110,58 +95,6 @@
         </ul>
     
       </nav>
-      
-      <header>
-            <div class="head">
-              <h1>
-                Welcome
-                <?php
-                  get_userName();
-                ?>
-              </h1>
-            </div>
-      </header>
-          
-
-          <div class="row" >
-            <div class="card w-50 bg-secondary mb-3 rounded-0" style="width: 18rem;" >
-                 <div class="card-header" id="courseListTxt">
-                   Schools
-                 </div>
-                 <ul class="list-group list-group-flush"  >
-                   <?php showUserSchools($userId); ?>
-                   <li class="list-group-item" href="#" id="add_course_btn">Add a Course</li>
-
-                 </ul>
-               </div>
-        
-               <div class="card w-50 bg-secondary mb-3 rounded-0" style="width: 18rem;" >
-                     <div  class="card-header" id="courseListTxt">
-                       Favorite Notes
-                     </div>
-                     <ul class="list-group list-group-flush"  >
-						<?php showUserNotes($userId); ?>
-
-                     </ul>
-                   </div>
-       
-         </div>
- 
-      
-        </div>
-        <div class="footerDiv">
-          <ul id="footer">
-            <li><a href="./ticket.php">Send Feedback</a></li>
-                <li><a href="./ticket.php">Help</a></li>
-                <li><a href="./FAQ.php">FAQ</a></li>
-                </li>
-         </ul>
-        </div>
- 
-</body>
-
-
-
 
  <!--request pop-up -->
  <div id="reqModal" class="reqmodal" >
@@ -249,132 +182,13 @@
     
 </div>
 
-
- <!--add course pop-up -->
- <div id="AddCourseModal" class="reqmodal" >
-    <!-- reqModal content -->
-    <div  class="reqmodal-content">
-      <span class="close close1">&times;</span>
-
-      <a style="font-size:28px;">Add a Course</a><br><br>
-
-      <div class="req-form-group">
-
-           <form action="functions.php" method="POST">
-             <div class="reqrow">
-              <div class="req-col-25">
-                <label for="addC_Sch">School</label>
-              </div>
-              <div class="req-col-75">
-              <form action="">
-                <select id="addC_Sch_selection" name="addC_Sch_selection"></select>
-                <form>
-              </div>
-            </div>
-            <div class="reqrow">
-              <div class="req-col-25">
-                <label for="addC_Course">Course</label>
-              </div>
-              <div class="req-col-75">
-                <select id="addC_Course_selection" name="addC_Course_selection"></select>
-                <!-- test show course -->
-                <!-- <div id="txtHint">Courses info will be listed here...</div> -->
-              </div>
-            </div>
-            <br>
-            <div class="reqrow">
-              <input type="submit" name="submit_add_course" value="Add" id="submit_add_course" style="background-color:goldenrod">
-            </div>
-            </form> 
-
-            <?php
-              if(isset($_POST['submit_add_course'])){
-                echo '<script>
-                  var AddCourseModal = document.getElementById("AddCourseModal");
-                  AddCourseModal.style.display = "none";
-                </script>';
-              }
-            ?>
-
-      </div>
-    </div>
-    
-</div>
-
 <script>
-    //Ajax Db get course by school select
-    
-	$(document).ready(function(){
-		
-		var selectedSchool;
-		var selectedCourse;
-		
-		loadSchools();
-		
-		$('#addC_Sch_selection').on('change', function() {
-				loadCourses(this.value);
-		});
-		
-		function loadSchools(){
-			var schools = new Array();
-			$.ajax({
-				type:"POST",
-				url:"functions.php",
-				data:{listSchools: 1},
-				success:function(data){
-					schools = JSON.parse(data);
-					for(var i = 0; i < schools.length; i++){
-						$('#addC_Sch_selection').append(schools[i]);
-					
-						
-					}
-					$("#addC_Sch_selection").val($("#addC_Sch_selection option:first").val());
-					selectedSchool = $('#addC_Sch_selection').val();
-					loadCourses($('#addC_Sch_selection').val());
-				}
-				
-			});		
-		}
-		
-		function loadCourses(school){
-			var courses = new Array();
-			var newHtml = "";
-			
-			console.log(school);
-			
-			$.ajax({
-				type:"POST",
-				url:"functions.php",
-				data:{listCourses: school},
-				success:function(data){
-					try{
-						courses = JSON.parse(data);
-						console.log(courses);
-						for(var i = 0; i < courses.length; i++){
-							newHtml += courses[i];
-						}
-						$("#addC_Course_selection").html(newHtml);
-						$("#addC_Course_selection").val($("#addC_Course_selection option:first").val());
-						selectedCourse = $("#addC_Course_selection").val();
-					}catch(err){
-						console.log(err.message);
-						$("#addC_Course_selection").html("<option value='noCourse' id='added_School'>No Courses Available</option>");
-					}
-				}
-			});
-			
-		}
-	});
-
     // Get the modal
     var modal = document.getElementById('reqModal');
-    var AddCourseModal = document.getElementById('AddCourseModal');
     // Get the button that opens the modal
-    var reqbtn = document.getElementById("getReq");
-    var add_course_btn = document.getElementById("add_course_btn");
+    var reqbtn = document.getElementById("getReq"); 
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
-    var span1 = document.getElementsByClassName("close1")[0];
     var reqSubmit = document.getElementById('reqSubmit');
     // When the user clicks the button, open the modal 
     reqbtn.onclick = function() {
@@ -384,24 +198,15 @@
     span.onclick = function() {
       modal.style.display = "none";
     }
+
+    // reqSubmit.onclick = function() {
+    //   modal.style.display = "none";
+    // }
+
     //clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
       if (event.target == modal) {
         modal.style.display = "none";
-      }
-    }
-
-    add_course_btn.onclick = function() {
-      AddCourseModal.style.display = "block";
-    }
-    //clicks on <span> (x), close the modal
-    span1.onclick = function() {
-      AddCourseModal.style.display = "none";
-    }
-    //clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-      if (event.target == AddCourseModal) {
-        AddCourseModal.style.display = "none";
       }
     }
 
@@ -418,13 +223,9 @@
           reqS_hidden_section.style.display = "none";
           reqC_hidden_section.style.display = "none";
         }
+
     }
 
-    function Crs_dependon_Sch(){
-      var addC_Sch_Slection = document.getElementById("added_School").value;
-      document.getElementById("addC_Course_selection").value;
-      // location.reload();
-    }
     </script>
 
     <style>
@@ -535,7 +336,91 @@
           }
         }
         </style>
-        
 
+      <table  id ="searchTable" class="table table-hover table-striped table-dark">
+        <form name = "search_form2" onsubmit = "return search_validate2()" action="search.php" method="POST">
+        <thead>
+          <tr>
+            <th scope="col" style="padding:20px;">
+              <input id="searchPage_search_input" name="searchPage_search_input" type="text" placeholder="Search..." style="position: relative;left:-33%;width:30%;" 
+              value="<?php 
+              if (isset($_POST['searchPage_search_Btn']) || isset($_POST['display_notes_SR']) || isset($_POST['display_all_SR']) || isset($_POST['display_courses_SR'])) {
+                echo isset($_POST['searchPage_search_input']) ? $_POST['searchPage_search_input'] : '' ;
+              } else{
+                echo isset($_POST['search_keyword']) ? $_POST['search_keyword'] : '';
+              }
+              ?>"></a>
+                <span>
+                <button id="searchPage_search_Btn" name="searchPage_search_Btn" type="submit" style="position: relative;left:-33%;width:5%;background: goldenrod; padding:10px;border-radius: 12px;"><i class="fa fa-search"></i></button>
+                </span>
+                </th>
+          </tr>
+        </thead>
 
+      </form>
+      <tbody>
+      <tr><td>
+      <style>
+        .search_nav_button {
+          background-color: grey;
+          border: none;
+          color: goldenrod;
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-top: 8px;
+          padding-bottom: 8px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          border-radius: 12px;
+          margin-right:20px;
+        }
+      </style>
+
+        <button type="submit" id="display_all_SR" name="display_all_SR" class="search_nav_button">ALL</button>
+        <button type="submit" id="display_notes_SR" name="display_notes_SR" class="search_nav_button">Notes</button>
+        <button type="submit" id="display_courses_SR" name="display_courses_SR" class="search_nav_button">Courses</button>
+      </td></tr>
+
+      <?php
+        search();
+      ?>
+
+      </tbody>
+      </table>    
+</body>
+
+<style>
+table th {
+   text-align: center; 
+}
+
+.table {
+   margin: auto;
+   margin-top:4%;
+   min-height: 200px !important; 
+   width: 85% !important; 
+}</style>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="./jsFiles/bootstrap/bootstrap.bundle.min.js.map"></script>
+<script src="./jsFiles/bootstrap/bootstrap.bundle.js.map"></script>
+<script src="./jsFiles/bootstrap/bootstrap.js"></script>
+<script src="./jsFiles/bootstrap/bootstrap.bundle.js.map"></script>
+<script>
+    $(document).ready(function(){
+      $("#adminInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        if ((value.length)>2){
+        $("#search tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+       });
+        }
+      });
+    });
+    </script>
 </html>

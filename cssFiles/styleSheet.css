@@ -4,7 +4,9 @@
 #courseListTxt{
   color: goldenrod; 
 }
-
+.searchList{
+  padding: 12px 80% 12px 0px;
+}
 
 div#FAQTable {
     border: 8px dashed #565a5efd;
@@ -64,24 +66,37 @@ div#FAQTable {
 
 
 .collapse {
-max-height: 200px;
-overflow-y: scroll;
+
 }
-.head{
+/* .head{
 height: 100px; ;
 background-color: rgb(0, 102, 255); 
 text-align: right; 
-
+} */
+/* .head section modified by Joe on 4/22 */
+.head{
+  height: 115px; 
+  background-color: #6c757d; 
+  text-align: right; 
+  padding:10px;
 }
+
 .head h1{
 padding-top: 44px; 
 font-size: 55px; 
 color: white;
 }
+.head2{
+  height: 50px ;
+  background-color: white; 
+  
+  
+}
+
 
 .sidenav {
-height: 100%; 
-width: 140px;
+height: 94%; 
+width: 180px;
 position: fixed;
 z-index: 1;
 top: 55px;
@@ -100,25 +115,71 @@ display: block;
  
 }
 
+#downloadLink {
+max-height: 1000px;
+max-width: 250px;
+margin-left: 2px;
+overflow: hidden;
+text-overflow: ellipsis;
+text-decoration: none;
+float: left;
+background-color: transparent;
+font-size: 25px;
+color: goldenrod; 
+display: block;
+ 
+}
+
+#notesLink {
+		/*top right bottom left*/
+padding: 10px 0 0 10px;
+width: 150px;
+overflow: hidden;
+text-overflow: ellipsis;
+text-decoration: none;
+float: left;
+text-align: left;
+background-color: transparent;
+font-size: 18px;
+color: goldenrod; 
+}
+
+#notesLinkDelete {
+padding: 10px 0 0 10px;
+font-weight: bold;
+width: 150px;
+text-align: right;
+overflow: hidden;
+text-overflow: ellipsis;
+text-decoration: none;
+float: left;
+background-color: transparent;
+font-size: 16px;
+color: #a01818; 
+display: block;
+}
+
+#favCourseRemove {
+padding: 0px 0px 0px 40px;
+font-weight: bold;
+width: 150px;
+text-align: left;
+overflow: hidden;
+text-overflow: ellipsis;
+text-decoration: none;
+float: left;
+background-color: transparent;
+font-size: 16px;
+color: #a01818; 
+display: block;
+}
+
+
 .sidenav a:hover {
 color: white;
 }
 
-#slideshow {
 
-width: 70%;
-height: 240px;
-padding: 10px;
-
-}
-
-#slideshow > div {
-position: absolute;
-top: 68%; 
-left: 40%;
-right: 40%;
-bottom: 10px;
-}
 .footerDiv{
   position: fixed;
   bottom:0px;
@@ -144,10 +205,12 @@ align-content: center;
 }
   
 .card{
-height: 350px;
+height: 50vh;
+min-height: 350px;
+overflow-y: scroll;
 margin-top: auto;
 margin-bottom: auto;
-width: 550px;
+width: 50vw;
 background-color: gray; 
 }
   
@@ -226,22 +289,55 @@ margin-right: 50px;
 }
 
 .openbtn {
-font-size: 20px;
-
-background-color: #007bff;
-color: white;
-padding: 10px 15px;
-border: none;
-
-float:right;
-border-radius: 12px; 
+  font-size: 20px;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  margin-top: 58px;
+  margin-right: 2px;
+  position:absolute;
+  top:0;
+  right:0;
+  width: 30%; 
+  max-width: 24rem;
+  border-radius: 12px; 
+}
+#addbtn {
+  font-size: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  margin-bottom: 56px;
+  margin-left: 2px;
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:140px; 
+  height:40px;
+  border-radius: 4px; 
 
 }
-
 .openbtn:hover {
 background-color:gray;
 }
 
+#addbtn{
+  bottom:0; 
+}
+#uploadHeader{
+  color:gold; 
+}
+#upload{
+  font-size: 20px;
+  color: white;
+  bottom: 0; 
+  padding: 55px 55px;
+  border:1px solid #007bff;
+  border-radius: 12px; 
+  width: 95%; 
+ 
+}
 #mainb {
 transition: margin-right .5s;
 padding: 16px;
@@ -250,50 +346,192 @@ width: 20%;
 }
 
 .sidebar2 {
-height: 30%;
-width: 0;
-position: fixed;
-z-index: 1;
-bottom: 0;
-background-color: #111;
-overflow-x: hidden;
-transition: 0.5s;
-
+  height: 33%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  bottom: 0;
+  background-color:#818181;
+  overflow-x: hidden;
+  transition: 0.5s;
+  
 }
 
 .sidebar2 a {
-padding: 20px 1px 1px 32px;
-top: 30px;
-text-decoration: none;
-font-size: 25px;
-color: #818181;
-display: block;
-overflow-x: hidden;
-transition: 0.3s;
+  padding: 20px 1px 1px 32px;
+  top: 30px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  overflow-x: hidden;
+  transition: 0.3s;
 }
 
 .sidebar2 a:hover {
-color:gold;
+  color:gold;
 }
 
 .sidebar2 .closebtn {
-position: absolute;
-top: 24px;
-right: 0;
-font-size: 36px;
-margin-right: 50px;
+  position: absolute;
+  top: 24px;
+  right: 0;
+  font-size: 36px;
+  margin-right: 50px;
 }
 #mainc{
 transition: margin-bottom .5s;
 
 }
-
 iframe {
-  width: 500px;
-  height: 500px;
-  padding-top: 60px; 
+  width: 740px;
+  height: 800px;
+ 
+  margin-top: 120px; 
+  margin-left: 200px; 
   border:0 transparent;
-  margin: 0 auto;
+
   display: block; 
-  background-color:white;
+
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  border-radius: 12px;
+  -moz-box-shadow: 4px 4px 14px #000;
+  -webkit-box-shadow: 4px 4px 14px #000;
+  box-shadow: 4px 4px 14px #000;
+}
+
+object {
+  width: 740px;
+  height: 800px;
+ 
+  margin-top: 130px; 
+  margin-left: 200px; 
+  border:0 transparent;
+
+  display: block; 
+
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  border-radius: 12px;
+  -moz-box-shadow: 4px 4px 14px #000;
+  -webkit-box-shadow: 4px 4px 14px #000;
+  box-shadow: 4px 4px 14px #000;
+}
+
+#noteName{
+	position: absolute;
+	top: 75px; 
+	left: 220px; 
+	font-size: 24pt;
+}
+
+@media only screen and (max-width: 1350px){
+	.comments{
+		display: none;
+	}
+}
+
+.comments{
+  margin-top: 110px;
+  margin-right: 2px;
+  position:absolute;
+  top:0;
+  right:0;
+  height: 1010px; 
+  
+}
+.commentBox {
+  padding:10px;
+  border-top:1px dotted #bbb;
+}
+.commentBox .form-group:first-child, .actionBox .form-group:first-child {
+  width:88%;
+}
+.commentBox .form-group:nth-child(2), .actionBox .form-group:nth-child(2) {
+  width:28%;
+}
+
+.commentList{
+	  max-height:480px;
+}
+
+.comments{
+	max-height: 1000px;
+}
+
+.panel-body{
+	max-height: 500px;
+}
+
+.commentList li {
+  margin:0;
+  margin-top:10px;
+}
+.commentTxt p {
+  margin:0;
+  text-align: left;
+}
+
+.commentTxt{
+  margin-bottom: 15px;
+  width: 300px;
+}
+
+.media-list{
+	padding: 0;
+}
+
+.sub-text {
+  color:goldenrod;
+  text-align: right;
+  font-size:20px;
+}
+
+#SchoolTable {
+  border-collapse: collapse;
+  width: 100%;
+  max-height: 750px; 
+  overflow-y: scroll; 
+}
+#schlHeader{
+  color: white;
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 12px;
+  
+}
+
+#stitle{
+  background-color:#818181;
+
+}
+
+
+#schoolTable{
+  min-height: 300px; 
+  overflow-y: scroll;
+}
+
+#ticketTable{
+  min-height: 300px; 
+  overflow-y: scroll;
+}
+#requestTable{
+  min-height: 300px; 
+  overflow-y: scroll;
+}
+#courseTable{
+  
+  min-height: 300px; 
+  overflow-y: scroll;
+}
+td{
+  color: gold;
+}
+#searchTable{
+	max-height: 750px;
+	overflow-y: scroll;
 }

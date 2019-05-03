@@ -1,16 +1,17 @@
 <!-- 
-user profile page (not admin user)
-allow user to change Fname, Lname
+Admin profile Page
+allow admin to change Fname, Lname
 direct user to reset password and send feedback page
 -->
 <?php
 include 'functions.php';
   dbConnect();
   $loginPage = "login.php";
-if(isset($_SESSION['userId'])) {
-	$userId = $_SESSION['userId'];
+if(isset($_SESSION['adminId'])) {
+	$userId = $_SESSION['adminId'];
 	}else {
     $user = null;
+	header('Location: ' . "./");
     //direct back to login page if not logged in
     //echo "<meta http-equiv='refresh' content='1; url=$loginPage'>";
 	}
@@ -227,7 +228,7 @@ function reset_pw1() {
   } 
 }
 function openwinhome(){
-  window.open("home.php", "_self");
+  window.open("admin_home.php", "_self");
 }
 </script>
 
@@ -249,16 +250,16 @@ function openwinhome(){
        <i class="fas fa-user fa-7x " style="color:goldenrod; margin-top:20px;"></i>
        <h4 class="usernameText" style="color:white; font-size:40px; margin-top:20px;"><b>
               <?php
-                get_userName();
+                get_Admin_userName();
               ?>
             </b>
             <button class="modBtn1" type="button" onclick="mod_username()">Update</button>
-            <form method="POST" action="profile.php">
+            <form method="POST" action="admin_profile.php">
               <div id="mod_username" style="display: none;">
                 <input type="text" class="New_username_input" name="newUsername" placeholder="Enter a New Username" required="required">
-                <button class="updateBtn1" type="submit" name="updateUsername">Submit</button>
+                <button class="updateBtn1" type="submit" name="update_admin_Username">Submit</button>
                 <?php
-                  update_Username();
+                  update_Admin_Username();
                 ?>
               </div>
             </form>
@@ -274,15 +275,15 @@ function openwinhome(){
             <span class="title">First Name</span>
             
             <?php
-              get_Fname();
+              get_admin_Fname();
             ?>
             <button class="modBtn" type="button" onclick="mod_Fname()">Update</button>
               <li class="list-group-item" id="mod_Fname" style="display: none;">
-              <form method="POST" action="profile.php">
+              <form method="POST" action="admin_profile.php">
               <input type="text" class="profile_input" name="newFname" placeholder="Update First Name" required="required">
               <button class="updateBtn" type="submit" name="updateFname">Submit</button>
                 <?php
-                  update_Fname();
+                  update_admin_Fname();
                 ?>
               </form>
               </li>
@@ -291,15 +292,15 @@ function openwinhome(){
           <li class="list-group-item">
           <span class="title">Last name</span>
             <?php
-              get_Lname();
+              get_admin_Lname();
             ?>
           <button class="modBtn" type="button" onclick="mod_Lname()">Update</button>
               <li class="list-group-item" id="mod_Lname" style="display: none;">
-              <form method="POST" action="profile.php">
+              <form method="POST" action="admin_profile.php">
               <input type="text" class="profile_input" name="newLname" placeholder="Update Last Name" required="required">
               <button class="updateBtn" type="submit" name="updataLname">Submit</button>
                 <?php
-                  update_Lname();
+                  update_admin_Lname();
                 ?>
               </form>
               </li>
@@ -308,15 +309,15 @@ function openwinhome(){
           <li class="list-group-item">
           <span class="title">Email</span>
           <?php
-          get_email();
+            get_admin_email();
           ?>
             <button class="modBtn" type="button" onclick="mod_email()">Update</button>
                 <li class="list-group-item" id="mod_email" style="display: none;">
-                <form method="POST" action="profile.php">
+                <form method="POST" action="admin_profile.php">
                 <input type="email" class="profile_input" name="newEmail" placeholder="Update Email Address" required="required">
                 <button class="updateBtn" type="submit" name="updataEmail">Submit</button>
                   <?php
-                    update_email();
+                    update_admin_email();
                   ?>
                 </form>
 
@@ -325,7 +326,7 @@ function openwinhome(){
 
         <div class="card-body bg-dark">
           <a href="#" class="card-link" style="color:goldenrod" onclick="reset_pw()">Reset Password</a>
-             <form method="POST" id="reset_pw" action="profile.php" style="display: none;margin-top:20px;">
+             <form method="POST" id="reset_pw" action="admin_profile.php" style="display: none;margin-top:20px;">
 
                 <div class="input-group form-group">
                   <div class="input-group-prepend">
@@ -353,7 +354,7 @@ function openwinhome(){
                 <span style="color:goldenrod;">
                 <?php
                   if(isset($_POST['changePw'])){
-                    resetPwProfilePage();
+                    reset_admin_PwProfilePage();
                   }
                 ?>
                 </span>

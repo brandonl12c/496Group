@@ -96,7 +96,7 @@ var disableRegBtn = function(){
     
 <body>
   <?php
-    include 'logfunctions.php';
+    include 'functions.php';
     dbConnect();    
     $username = $email = $RepeatEmail = $password = $Repeatpassword = "";
   ?>
@@ -162,13 +162,14 @@ var disableRegBtn = function(){
             <div class="form-group">
               <input type="submit" id="resetPwBtn" value="Reset Password" class="btn float-center login_btn1">
               <input type="button" onclick="openWinLogin();" value="Cancel" class="btn float-right login_btn2">
-
+              <span style="color:goldenrod;"><b>
                 <?php
                   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                    restPw();
+                    resetPw();
                     }
                 ?> 
-
+                </b>
+              </span>
             </div>
 
           </form>

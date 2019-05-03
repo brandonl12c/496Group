@@ -126,7 +126,7 @@ ALL FUNCTIONS UNDER THIS LINE
 		$favCourseId = $_POST['favCourseId'];
 
 		$query = "	SELECT
-						schoolId
+						schoolId, courseId
 					FROM
 						userCourses
 					WHERE
@@ -137,14 +137,13 @@ ALL FUNCTIONS UNDER THIS LINE
 		$row = mysqli_fetch_array($result);		
 		$schoolId = $row['schoolId'];
 		
-		echo $schoolId;
-		
 		$query = "DELETE FROM userCourses WHERE accountUserId='$accountUserId' AND favCourseId='$favCourseId'"; 
 		
 		if(!mysqli_query($GLOBALS['connection'], $query)){
-				die(mysqli_error($GLOBALS['connection']));
+			die(mysqli_error($GLOBALS['connection']));
+		}else{
+			echo "Course: ".$row['courseId']." Successfully Removed From Favorites </br>";
 		}
-		
 		$query = "	SELECT
 						schoolId
 					FROM
@@ -160,9 +159,8 @@ ALL FUNCTIONS UNDER THIS LINE
 		if($row['schoolId'] == null){
 			removeSchool($accountUserId, $schoolId);
 		}else{
-			header("Location: ./home.php");
+			//header("Location: ./home.php");
 		}
-		
 		
 	}		
 	
@@ -177,13 +175,13 @@ ALL FUNCTIONS UNDER THIS LINE
 
 		if(!mysqli_query($GLOBALS['connection'], $query)){
 				die(mysqli_error($GLOBALS['connection']));
+		}else{
+			echo "School: ".$schoolId." Successfully Removed From Favorites </br>";
 		}
-		header("Location: ./home.php");
+		//header("Location: ./home.php");
 
 	}
 	
-	
-
 	function addCourse(){
 		
 
@@ -263,9 +261,11 @@ ALL FUNCTIONS UNDER THIS LINE
 					('$accountUserId', '$schoolId', '$courseId')";
 		if(!mysqli_query($GLOBALS['connection'], $query)){
 				die(mysqli_error($GLOBALS['connection']));
+		}else{
+			echo "Course: ".$courseId." Successfully Added To Favorites </br>";
 		}
 		
-		header("Location: ./home.php");
+		//header("Location: ./home.php");
 
 	}
 	
@@ -303,75 +303,14 @@ ALL FUNCTIONS UNDER THIS LINE
 					
 		if(!mysqli_query($GLOBALS['connection'], $query)){
 			die(mysqli_error($GLOBALS['connection']));
+		}else{
+			echo "School: ".$courseId." Successfully Added To Favorites </br>";			
 		}
+		
 		
 	}
 	
-	function createCourse(){
-		$schoolName = $_POST['sName'];
-		$courseName = $_POST['cName'];
-		$courseSection = $_POST['section'];
-		$adminUserId = $_SESSION['adminId']; 
-		
-		$query = "SELECT * FROM school WHERE schoolName='$schoolName' AND isDeleted=0";
-		$result = mysqli_query($GLOBALS['connection'], $query);
-		$row = mysqli_fetch_array($result);
-		$schoolId = $row['schoolId'];
-		if($row['schoolId'] == null){
-			echo "<script>alert('School Not Exists!')</script>";                
-			echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
-		}
-
-			$query = "SELECT courseName FROM course WHERE courseName='$courseName' AND schoolId = '$schoolId' AND isDeleted=0";
-			$result = mysqli_query($GLOBALS['connection'], $query);
-			$row = mysqli_fetch_array($result);
-			$query1 = "SELECT courseName FROM course WHERE section='$courseSection' AND schoolId = '$schoolId' AND isDeleted=0";
-			$result1 = mysqli_query($GLOBALS['connection'], $query1);
-			$row1 = mysqli_fetch_array($result1);
-			if($row['courseName'] != null || $row1['courseName'] != null){
-				echo "<script>alert('Course Already Exists!')</script>";
-				echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
-			}else{
-
-				$query = "SELECT courseName FROM course WHERE courseName ='$courseName' AND isDeleted=1";
-				$result = mysqli_query($GLOBALS['connection'], $query);
-				$row = mysqli_fetch_array($result);
-				if($row['courseName'] != null){
-					$query = 	"UPDATE course
-					SET isDeleted=0
-					WHERE courseName='$courseName'";
-					$result = mysqli_query($GLOBALS['connection'], $query);
-					echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
-				}
-				
-				$query = "SELECT MAX(courseId) AS courseId FROM course";
-				$result = mysqli_query($GLOBALS['connection'], $query);
-				$row = mysqli_fetch_array($result);
-				
-				$courseId = $row['courseId'];
-				
-				if($courseId != Null){
-					$courseId += 1;
-				}else{
-					$courseId = 4000000000;
-				}
-
-				$query = "INSERT INTO course
-							(courseId, schoolId, courseName, section, adminUserId) 
-							VALUES 
-							('$courseId', '$schoolId', '$courseName', '$courseSection', '$adminUserId')";
-							
-				if(!mysqli_query($GLOBALS['connection'], $query)){
-					die(mysqli_error($GLOBALS['connection']));
-				}
-			}
-	}
-	
-	function createSchool(){
-		
-		$schoolName = $_POST['sName'];
-		$acronym = $_POST['acronym'];
-		$adminUserId = $_SESSION['adminId'];
+	function createCourse($courseName, $section, $adminUserId, $schoolId){
 		$query = "SELECT userId FROM adminUser WHERE userId='$adminUserId'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
@@ -381,23 +320,63 @@ ALL FUNCTIONS UNDER THIS LINE
 			exit("<script>alert('Admin User Does Not Exist!')</script>");
 		}
 		
-		$query = "SELECT schoolName FROM school WHERE schoolName='$schoolName' AND isDeleted=0";
+		$query = "SELECT schoolId AS schoolId FROM school WHERE schoolId='$schoolId'";
+		$result = mysqli_query($GLOBALS['connection'], $query);
+		$row = mysqli_fetch_array($result);
+		$schoolId = $row['schoolId']; 
+		
+		if($schoolId == null){
+			exit("<script>alert('That School Does Not Exist!')</script>");
+		}
+		
+		$query = "SELECT section FROM course WHERE section='$section'";
+		$result = mysqli_query($GLOBALS['connection'], $query);
+		$row = mysqli_fetch_array($result);
+		
+		if($row['section'] != null){
+			exit("<script> alert('Course Section Already Exists') </script>");
+		}
+		
+		$query = "SELECT MAX(courseId) AS courseId FROM course";
+		$result = mysqli_query($GLOBALS['connection'], $query);
+		$row = mysqli_fetch_array($result);
+		$courseId = $row['courseId'];
+		
+		if($courseId != Null){
+			$courseId += 1;
+		}else{
+			$courseId = 4000000000;
+		}
+		
+		$query = "INSERT INTO course
+					(courseId, schoolId, courseName, section, adminUserId) 
+				  VALUES 
+					('$courseId', '$schoolId', '$courseName', '$section', '$adminUserId')";
+					
+		if(!mysqli_query($GLOBALS['connection'], $query)){
+			die(mysqli_error($GLOBALS['connection']));
+		}else{
+			echo "Course: " . $courseName . " Created Successfully<br>";
+		}
+	}
+	
+	function createSchool($schoolName, $acronym, $adminUserId){
+		
+		$query = "SELECT userId FROM adminUser WHERE userId='$adminUserId'";
+		$result = mysqli_query($GLOBALS['connection'], $query);
+		$row = mysqli_fetch_array($result);
+		$adminUserId = $row['userId']; 
+		
+		if($adminUserId == null){
+			exit("<script>alert('Admin User Does Not Exist!')</script>");
+		}
+		
+		$query = "SELECT schoolName FROM school WHERE schoolName='$schoolName'";
 		$result = mysqli_query($GLOBALS['connection'], $query);
 		$row = mysqli_fetch_array($result);
 
 		if($row['schoolName'] != null){
 			exit("<script>alert('School Already Exists!')</script>");
-		}
-
-		$query = "SELECT schoolName FROM school WHERE schoolName='$schoolName' AND isDeleted=1";
-		$result = mysqli_query($GLOBALS['connection'], $query);
-		$row = mysqli_fetch_array($result);
-		if($row['schoolName'] != null){
-			$query = 	"UPDATE school
-			SET isDeleted=0
-			WHERE schoolName='$schoolName'";
-			$result = mysqli_query($GLOBALS['connection'], $query);
-			echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
 		}
 		
 		$query = "SELECT MAX(schoolId) AS schoolId FROM school";
@@ -414,11 +393,13 @@ ALL FUNCTIONS UNDER THIS LINE
 
 		$query = "INSERT INTO school
 					(schoolId, schoolName, acronym, adminUserId) 
-					VALUES 
+				  VALUES 
 					('$schoolId', '$schoolName', '$acronym', '$adminUserId')";
 					
 		if(!mysqli_query($GLOBALS['connection'], $query)){
 			die(mysqli_error($GLOBALS['connection']));
+		}else{
+			echo "School: " . $schoolName . " Created Successfully<br>";
 		}
 		
 	}
@@ -431,9 +412,6 @@ ALL FUNCTIONS UNDER THIS LINE
 		//	echo "<br>" . $row['schoolName'] . " (" . $row['acronym'] .")";
 		//}
 		
-	}
-	
-	function showCourses(){
 	}
 	
 	function showNotes($courseId){
@@ -588,6 +566,7 @@ ALL FUNCTIONS UNDER THIS LINE
 		$accountUserId = $_SESSION['userId'];
 		$courseId = $_POST['courseId'];
 		$fileName = $_FILES['file']['name']; 
+		
 		$noteDir = ".\\docs\\";
 		$userDir = $noteDir . $accountUserId;
 		$newFilePath = $userDir . "\\" . $fileName;
@@ -605,16 +584,24 @@ ALL FUNCTIONS UNDER THIS LINE
 		$accept = in_array($fileType, $whiteList);
 		
 		if(!$accept){
-			exit("<script> alert('Extension Type Not Allowed: " . $fileType . "')</script>");
+			exit("<script> 
+				alert('Extension Type Not Allowed: " . $fileType . "');
+				window.location.href= './phpTestCases.php';
+			</script>");
 		}
 		
 		if(file_exists($newFilePath)){
-			exit("<script> alert('File Already Exists!')</script>");
+			exit("<script> 
+				alert('File Already Exists!');
+				window.location.href= './phpTestCases.php';
+			</script>");
 		}
 		
 		if(!is_dir($userDir)){
 			if(!mkdir($userDir)){
-				echo "<script> alert('File : " . $fileName . " Failed to Upload: No Such Directory')</script>";
+				echo "<script> alert('File : " . $fileName . " Failed to Upload: No Such Directory')
+				window.location.href= './phpTestCases.php';
+				</script>";
 			}
 		}
 		
@@ -626,7 +613,11 @@ ALL FUNCTIONS UNDER THIS LINE
 					  VALUES
 						('$accountUserId', '$courseId', '$fileNameOnly', '$fileType')";
 			if(mysqli_query($GLOBALS['connection'], $query)){
-				echo "<script> alert('File : " . $fileName . " has been uploaded')</script>";
+				echo "<script> 
+						alert('File : " . $fileName . " has been uploaded');
+						window.location.href= './phpTestCases.php';
+				</script>";
+				
 			}else{
 				echo "<script> alert('File : " . $fileName . " Failed to Upload: Database Error')</script>";
 				if(!mysqli_query($GLOBALS['connection'], $query)){
@@ -638,10 +629,10 @@ ALL FUNCTIONS UNDER THIS LINE
 			echo "<script> alert('File : " . $fileName . " Failed to Upload: Unkown Error')</script>";
 		}
 		
-		echo "	<script>
+		/* echo "	<script>
 			window.location.href='./home.php';
 		</script>";
-		
+		 */
 	}
 	
 	function deleteFile($fileId){
@@ -662,16 +653,9 @@ ALL FUNCTIONS UNDER THIS LINE
 		if(!unlink($filePath)){
 			echo "File Does Not Exist";
 		}else{
+			echo "Deleted " . $filePath;
 			$query = "DELETE FROM note WHERE noteId='$fileId'";
-			if(!mysqli_query($GLOBALS['connection'], $query)){
-				die(mysqli_error($GLOBALS['connection']));
-			}else{
-				echo "	<script>
-							alert('Deleted " . $filePath . "');
-							window.location.href = './myNotes.php';
-						</script>
-				";
-			}
+			mysqli_query($GLOBALS['connection'], $query);
 		}
 	}
 	
@@ -697,7 +681,9 @@ ALL FUNCTIONS UNDER THIS LINE
 
 		//$filePath = ".\\docs\\1000000000\\EmploymentOpportunitywithDRES.pdf";
 		
-		$filePath = ".\\docs\\" . retrieveFile($fileId);
+		$filePath = retrieveFile($fileId);
+		
+		echo "<script>alert('". $fileId .$filePath ."');</script>";
 		
 	    header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
@@ -710,42 +696,31 @@ ALL FUNCTIONS UNDER THIS LINE
 		readfile($filePath);
 	}
 	
-	function deleteSchool(){
-		$schoolName = $_POST['sName1'];
-		$query = "SELECT * FROM school WHERE schoolName = '$schoolName' "; 
-		$result = mysqli_query($GLOBALS['connection'], $query);
-		if (mysqli_num_rows($result) == 0) {
-			echo "<script>alert('No School Match in DataBase')</script>";
-			echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
+	function deleteSchool($schoolId){
+		$query = 	"UPDATE school
+					SET isDeleted=1
+					WHERE schoolId='$schoolId'";
+		if(mysqli_query($GLOBALS['connection'], $query)){
+		
 		}else{
-			$query = 	"UPDATE school SET isDeleted=1 WHERE schoolName='$schoolName'";
-			$result = mysqli_query($GLOBALS['connection'], $query);
+			die(mysqli_error($GLOBALS['connection']));
 		}
 	}
 
-	function deleteCourse(){
-		$schoolName = $_POST['sName1'];
-		$courseName = $_POST['cName1'];
-		$query = "SELECT * FROM school WHERE acronym = '$schoolName' "; 
-		$result = mysqli_query($GLOBALS['connection'], $query);
-		$query1 = "SELECT * FROM course WHERE section = '$courseName' "; 
-		$result1 = mysqli_query($GLOBALS['connection'], $query1);
-		if (mysqli_num_rows($result) == 0 ||mysqli_num_rows($result1) == 0) {
-			echo "<script>alert('No Match in DataBase')</script>";
-			echo "<meta http-equiv='refresh' content='0; url=admin_home.php'>";
+	function deleteCourse($courseId){
+		$query = 	"UPDATE course
+					SET isDeleted=1
+					WHERE courseId='$courseId'";
+		if(mysqli_query($GLOBALS['connection'], $query)){
+		
 		}else{
-			$query = "SELECT * FROM school WHERE acronym='$schoolName' AND isDeleted=0";
-			$result = mysqli_query($GLOBALS['connection'], $query);
-			$row = mysqli_fetch_array($result);
-			$schoolId = $row['schoolId'];
-			$query = 	"UPDATE course SET isDeleted=1 WHERE schoolId='$schoolId' AND section = '$courseName'";
-			$result = mysqli_query($GLOBALS['connection'], $query);
+			die(mysqli_error($GLOBALS['connection']));
 		}
 	}
 	
 	function submitTicket(){
-		$accountUserId = $_SESSION['userId'];
-		//$accountUserId = 1000000000;
+		//$accountUserId = $_SESSION['userId'];
+		$accountUserId = 1000000000;
 		$ticketContent = $_POST['ticketContent'];
 		$ticketType = $_POST['ticketType'];
 		$ticketTopic = $_POST['ticketTopic'];
@@ -764,6 +739,7 @@ ALL FUNCTIONS UNDER THIS LINE
 		}else{
 			die(mysqli_error($GLOBALS['connection']));
 		}
+		
 	}
 
 	function getCourseSection($courseId){
@@ -797,24 +773,6 @@ ALL FUNCTIONS UNDER THIS LINE
 		}		
 	}
 
-	function listCrs_admin(){
-		$C_query = "SELECT * FROM course WHERE isDeleted = 0 "; 
-		$C_query_result = mysqli_query($GLOBALS['connection'], $C_query);
-		if (mysqli_num_rows($C_query_result) == 0) {
-			echo '<tr><td> No Course </td></tr>';
-		}else{
-				while($C_query_result_row = mysqli_fetch_assoc($C_query_result)){
-					$schoolId = $C_query_result_row['schoolId'];
-					$SN_query = "SELECT * FROM school WHERE schoolId = '$schoolId'";
-					$SN_query_result = mysqli_query($GLOBALS['connection'], $SN_query);
-					$row = mysqli_fetch_assoc($SN_query_result);
-					echo '<tr><td> ';
-					echo $row['acronym'].' '.$C_query_result_row['section'].': '.$C_query_result_row['courseName'];
-					echo '</td></tr>';
-				}
-			}	
-	}
-
 	function listSchools(){
 		$schools = array();
 		$code = "";
@@ -831,20 +789,6 @@ ALL FUNCTIONS UNDER THIS LINE
 			}
 			echo JSON_encode($schools); 
 		}
-	}
-	
-	function listSch_admin(){
-		$S_query = "SELECT * FROM school WHERE isDeleted = 0 "; 
-		$S_query_result = mysqli_query($GLOBALS['connection'], $S_query);
-		if (mysqli_num_rows($S_query_result) == 0) {
-			echo '<tr><td> No Course </td></tr>';
-		}else{
-				while($S_query_result_row = mysqli_fetch_assoc($S_query_result)){
-				echo '<tr><td> ';
-				echo $S_query_result_row['acronym'].' '.$S_query_result_row['schoolName'];
-				echo '</td></tr>';
-				}
-			}	
 	}
 
 	function getNoteName(){
@@ -966,64 +910,55 @@ ALL FUNCTIONS UNDER THIS LINE
 		$_SESSION['courseId'] = $courseId;
 		header("Location: " . $_SERVER['HTTP_REFERER']);
 	}
+
+/*
+-------------------------------------------------
+ALL LOGGING FUNCTIONS UNDER THIS LINE
+-------------------------------------------------
+*/
+
+function loginValidation(){
+	$loginPage = "login.php";
+	$homePage = "home.php";
+	$email = $_POST['email'];
+	$password = $_POST['password'];
+
+	$adminLoginsql = "SELECT * FROM adminUser WHERE email='$email'";
+	$adminLoginresult = mysqli_query($GLOBALS['connection'], $adminLoginsql);
 	
+	$loginsql = "SELECT * FROM accountUser WHERE email='$email'";
+	$login_result = mysqli_query($GLOBALS['connection'], $loginsql);
 
-
-
-
-
-
-
-
-
-	// ************************************************************************************************************************************
-	// ************************************************************************************************************************************
-	// lofunctions.php
-	// ************************************************************************************************************************************
-	// ************************************************************************************************************************************
-
-	function loginValidation(){
-		$loginPage = "login.php";
-		$homePage = "home.php";
-		$email = $_POST['email'];
-		$password = $_POST['password'];
-
-		$adminLoginsql = "SELECT * FROM adminUser WHERE email='$email'";
-		$adminLoginresult = mysqli_query($GLOBALS['connection'], $adminLoginsql);
-		
-		$loginsql = "SELECT * FROM accountUser WHERE email='$email'";
-		$login_result = mysqli_query($GLOBALS['connection'], $loginsql);
-
-		if(mysqli_num_rows($adminLoginresult) > 0){
-				$row = mysqli_fetch_assoc($adminLoginresult);
-				//verify argon2I hashed password 
-				$verified = password_verify($password, $row['password']);
-				//modify after hash hashed password
-				if($verified){
-						$_SESSION['adminId'] = $row['userId'];
-						echo "Admin <br>".$row['userName'].", You are Logged in.";
-						//change to admin home page
-						echo "<meta http-equiv='refresh' content='1; url=admin_home.php'>";
-						exit();
-				} else{
-						echo "Invalid Email or Password ";
-				}
-		} else if(mysqli_num_rows($login_result) > 0){
-				$user_row = mysqli_fetch_assoc($login_result);
-				//verify argon2I hashed password 
-				$verified = password_verify($password, $user_row['password']);
-				if($verified){
-						$_SESSION['userId'] = $user_row['userId'];
-						echo "Hi ".$user_row['userName'].",<br> You are Logged in.";
-						//echo $user_row['userId'];
-						echo "<meta http-equiv='refresh' content='1; url=$homePage'>";
-						//exit();
-				}else {
-						echo "Invalid Email or Password ";
-				}
-		} else{
-				echo "Invalid Email or Password ";
-		}
+	if(mysqli_num_rows($adminLoginresult) > 0){
+			$row = mysqli_fetch_assoc($adminLoginresult);
+			//verify argon2I hashed password 
+			$verified = password_verify($password, $row['password']);
+			//modify after hash hashed password
+			if($verified){
+					$_SESSION['userId'] = $row['userId'];
+					echo "Admin <br>".$row['userName'].", You are Logged in.";
+					//change to admin home page
+					echo "<meta http-equiv='refresh' content='1; url=admin_home.php'>";
+					exit();
+			} else{
+					echo "Invalid Email or Password ";
+			}
+	} else if(mysqli_num_rows($login_result) > 0){
+			$user_row = mysqli_fetch_assoc($login_result);
+			//verify argon2I hashed password 
+			$verified = password_verify($password, $user_row['password']);
+			if($verified){
+					$_SESSION['userId'] = $user_row['userId'];
+					echo $user_row['userName'] . " Successfully Logged in.<br>";
+					//echo $user_row['userId'];
+					//echo "<meta http-equiv='refresh' content='1; url=$homePage'>";
+					//exit();
+			}else {
+					echo "Invalid Email or Password ";
+			}
+	} else{
+			echo "Invalid Email or Password ";
+	}
 }
 
 function registration(){
@@ -1046,9 +981,9 @@ function registration(){
 		$admin_email_result = mysqli_query($GLOBALS['connection'], $admin_emailsqli);
 
 		if(mysqli_num_rows($email_result) == 0 && mysqli_num_rows($admin_email_result) == 0){
-				echo "Registration Complete!<br>";
+				echo $username." Registered<br>";
 				//echo "$hashed_password";				
-				echo "<meta http-equiv='refresh' content='2; url=$loginPage'>";
+				//echo "<meta http-equiv='refresh' content='2; url=$loginPage'>";
 				$reg_sql = "INSERT INTO accountUser(userName, `password`, `email`,`Fname`, `Lname`) Values ('$username','$hashed_password','$email','$Fname','$Lname')";
 				$reg_result = mysqli_query($GLOBALS['connection'], $reg_sql);
 		} else{
@@ -1076,7 +1011,6 @@ function resetPw(){
 				}         
 }
 
-
 function get_userName(){
 		if(isset($_SESSION['userId'])){
 		$userId = $_SESSION['userId'];
@@ -1092,14 +1026,16 @@ function get_userName(){
 }
 
 function get_Admin_userName(){
-	if(isset($_SESSION['adminId'])){
-		$userId = $_SESSION['adminId'];
-		$getUsername_sql = "SELECT * FROM adminUser WHERE userId='$userId'";
-		$userName_sql_result = mysqli_query($GLOBALS['connection'], $getUsername_sql);
-		$username_row = mysqli_fetch_assoc($userName_sql_result);
-		echo $username_row['userName'];
+	if(isset($_SESSION['userId'])){
+	$userId = $_SESSION['userId'];
+	$getUsername_sql = "SELECT userName FROM adminUser WHERE userId='$userId'";
+	$userName_sql_result = mysqli_query($GLOBALS['connection'], $getUsername_sql);
+	$username_row = mysqli_fetch_assoc($userName_sql_result);
+	echo $username_row['userName'];
 	}else {
-		echo "Please Sign in!";
+	echo "Please Sign in!";
+	//********** remove // after **************
+	//echo "<meta http-equiv='refresh' content='2; url=$loginPage'>";
 	}
 }
 
@@ -1111,20 +1047,22 @@ function get_userName_loginPage(){
 			$getUsername_sql = "SELECT userName FROM accountUser WHERE userId='$userId'";
 			$userName_sql_result = mysqli_query($GLOBALS['connection'], $getUsername_sql);
 			$username_row = mysqli_fetch_assoc($userName_sql_result);
-			echo "Hi &nbsp;".$username_row['userName']. ",<br>Redirect to Home page.";
-			echo "<meta http-equiv='refresh' content='2; url=$homePage'>";
-			exit();
-		}else if(isset($_SESSION['adminId'])){
-			$userId = $_SESSION['adminId'];
+
 			$get_adminUsername_sql = "SELECT userName FROM adminUser WHERE userId='$userId'";
 			$AdminName_sql_result = mysqli_query($GLOBALS['connection'], $get_adminUsername_sql);
 			$adminusername_row = mysqli_fetch_assoc($AdminName_sql_result);
+
+			if(mysqli_num_rows($AdminName_sql_result) > 0){
 				echo "Hi &nbsp;".$adminusername_row['userName']. ",<br>Redirect to Admin_Home page.";
 				echo "<meta http-equiv='refresh' content='2; url=$admin_homePage'>";
 				exit();
+			}else if(mysqli_num_rows($userName_sql_result) > 0){
+				echo "Hi &nbsp;".$username_row['userName']. ",<br>Redirect to Home page.";
+				echo "<meta http-equiv='refresh' content='2; url=$homePage'>";
+				exit();
 			}
 	}
-
+}
 
 function get_email(){
 		if(isset($_SESSION['userId'])){
@@ -1139,8 +1077,8 @@ function get_email(){
 }
 
 function get_admin_email(){
-	if(isset($_SESSION['adminId'])){
-	$userId = $_SESSION['adminId'];
+	if(isset($_SESSION['userId'])){
+	$userId = $_SESSION['userId'];
 	$get_email_sql = "SELECT email FROM adminUser WHERE userId='$userId'";
 	$email_sql_result = mysqli_query($GLOBALS['connection'], $get_email_sql);
 	$email_row = mysqli_fetch_assoc($email_sql_result);
@@ -1165,9 +1103,10 @@ function get_Fname(){
 		echo "Fname Session Error!";
 		}
 }
+
 function get_admin_Fname(){
-	if(isset($_SESSION['adminId'])){
-	$userId = $_SESSION['adminId'];
+	if(isset($_SESSION['userId'])){
+	$userId = $_SESSION['userId'];
 	$get_Fname_sql = "SELECT Fname FROM adminUser WHERE userId='$userId'";
 	$Fname_sql_result = mysqli_query($GLOBALS['connection'], $get_Fname_sql);
 	$Fname_row = mysqli_fetch_assoc($Fname_sql_result);
@@ -1196,9 +1135,10 @@ function get_Lname(){
 		echo "Lname Session Error!";
 		}
 }
+
 function get_admin_Lname(){
-	if(isset($_SESSION['adminId'])){
-	$userId = $_SESSION['adminId'];
+	if(isset($_SESSION['userId'])){
+	$userId = $_SESSION['userId'];
 	$get_Lname_sql = "SELECT Lname FROM adminUser WHERE userId='$userId'";
 	$Lname_sql_result = mysqli_query($GLOBALS['connection'], $get_Lname_sql);
 	$Lname_row = mysqli_fetch_assoc($Lname_sql_result);
@@ -1222,11 +1162,12 @@ function update_Fname(){
 	echo "<meta http-equiv='refresh' content='0; url=$profilePage'>";
 		}
 }
+
 function update_admin_Fname(){
-	if(isset($_POST['updateFname']) && isset($_SESSION['adminId'])){
+	if(isset($_POST['updateFname']) && isset($_SESSION['userId'])){
 		$profilePage = "admin_profile.php";
 		$newFname = $_POST['newFname'];
-		$userId = $_SESSION['adminId'];
+		$userId = $_SESSION['userId'];
 		$update_Fname_sql = "UPDATE adminUser SET Fname = '$newFname' WHERE userId ='$userId' ";
 		$update_Fname_sql_result = mysqli_query($GLOBALS['connection'], $update_Fname_sql); 
 		echo "<meta http-equiv='refresh' content='0; url=$profilePage'>";
@@ -1243,11 +1184,12 @@ function update_Lname(){
 			echo "<meta http-equiv='refresh' content='0; url=$profilePage'>";
 		}
 }
+
 function update_admin_Lname(){
-	if(isset($_POST['updateLname']) && isset($_SESSION['adminId'])){
+	if(isset($_POST['updateLname']) && isset($_SESSION['userId'])){
 		$newLname = $_POST['newLname'];
 		$profilePage = "admin_profile.php";
-		$userId = $_SESSION['adminId'];
+		$userId = $_SESSION['userId'];
 		$update_Lname_sql = "UPDATE adminUser SET Lname = '$newLname' WHERE userId ='$userId' ";
 		$update_Lname_sql_result = mysqli_query($GLOBALS['connection'], $update_Lname_sql); 
 		echo "<meta http-equiv='refresh' content='0; url=$profilePage'>";
@@ -1266,10 +1208,10 @@ function update_Username(){
 }
 
 function update_Admin_Username(){
-	if(isset($_POST['update_admin_Username']) && isset($_SESSION['adminId'])){
+	if(isset($_POST['update_admin_Username']) && isset($_SESSION['userId'])){
 		$newUname = $_POST['newUsername'];
 		$adminprofilePage = "admin_profile.php";
-		$userId = $_SESSION['adminId'];
+		$userId = $_SESSION['userId'];
 		$update_Uname_sql = "UPDATE adminUser SET userName = '$newUname' WHERE userId ='$userId' ";
 		$update_Uname_sql_result = mysqli_query($GLOBALS['connection'], $update_Uname_sql); 
 		echo "<meta http-equiv='refresh' content='0; url=$adminprofilePage'>";
@@ -1294,8 +1236,9 @@ function update_email(){
 	}
 		}
 }
+
 function update_admin_email(){
-	if(isset($_POST['newEmail']) && isset($_SESSION['adminId'])){
+	if(isset($_POST['newEmail']) && isset($_SESSION['userId'])){
 		$newEmail = $_POST['newEmail'];
 		$profilePage = "admin_profile.php";
 		$emailsqli = "SELECT * FROM accountUser WHERE email='$newEmail'";
@@ -1303,7 +1246,7 @@ function update_admin_email(){
 	$admin_emailsqli = "SELECT * FROM adminUser WHERE email='$newEmail'";
 	$admin_email_result = mysqli_query($GLOBALS['connection'], $admin_emailsqli);
 	if(mysqli_num_rows($email_result) == 0 && mysqli_num_rows($admin_email_result) == 0){
-		$userId = $_SESSION['adminId'];
+		$userId = $_SESSION['userId'];
 		$update_email_sql = "UPDATE adminUser SET email = '$newEmail' WHERE userId ='$userId' ";
 		$update_email_sql_result = mysqli_query($GLOBALS['connection'], $update_email_sql); 
 		echo "<meta http-equiv='refresh' content='0; url=$profilePage'>";
@@ -1342,12 +1285,12 @@ function resetPwProfilePage(){
 
 function reset_admin_PwProfilePage(){
 
-	if(isset($_SESSION['adminId'])){
+	if(isset($_SESSION['userId'])){
 		$Currentpassword = $_POST['Currentpassword'];
 		$Newpassword = $_POST['Newpassword'];
 		$RepeatNewpassword = $_POST['RepeatNewpassword'];
 		$hashed_password = password_hash($Newpassword, PASSWORD_ARGON2I);
-		$userId = $_SESSION['adminId'];
+		$userId = $_SESSION['userId'];
 		$getPWsql = "SELECT password FROM adminUser WHERE userId='$userId'";
 		$getPWsql_result = mysqli_query($GLOBALS['connection'], $getPWsql);
 		$oldPW_row = mysqli_fetch_assoc($getPWsql_result);
@@ -1519,38 +1462,4 @@ function search(){
 	}
 }
 
-	function listT_admin(){
-		$T_query = "SELECT * FROM ticket WHERE isDeleted = 0 AND repliedTo = 0 "; 
-		$T_query_result = mysqli_query($GLOBALS['connection'], $T_query);
-		if (mysqli_num_rows($T_query_result) == 0) {
-			echo '<tr><td> No Ticket </td></tr>';
-		}else{
-				while($T_query_result_row = mysqli_fetch_assoc($T_query_result)){
-					$accountUserId = $T_query_result_row['accountUserId'];
-					$query = "SELECT * FROM accountUser WHERE userId='$accountUserId' AND isDeleted=0";
-					$result = mysqli_query($GLOBALS['connection'], $query);
-					$row = mysqli_fetch_array($result);
-					$email = $row['email'];
-				echo '<tr><td> ';
-				echo $T_query_result_row['ticketType'].' Ticket: '.$T_query_result_row['ticketTopic'].' '.$SCR_query_result_row['cName'];
-				echo str_repeat("&nbsp;", 60).'  Sent From: '.$email.'<br>';
-				echo 'Content: '.$T_query_result_row['ticketContent'];
-				echo '</td></tr>';
-				}
-			}	
-	}
-
-	function ListSCR_admin(){
-		$SCR_query = "SELECT * FROM request WHERE isDeleted = 0 "; 
-		$SCR_query_result = mysqli_query($GLOBALS['connection'], $SCR_query);
-		if (mysqli_num_rows($SCR_query_result) == 0) {
-			echo '<tr><td> No School/Course Request </td></tr>';
-		}else{
-				while($SCR_query_result_row = mysqli_fetch_assoc($SCR_query_result)){
-				echo '<tr><td> ';
-				echo $SCR_query_result_row['requestType'].' Request: '.$SCR_query_result_row['acronym'].' '.$SCR_query_result_row['cName'].' '.$SCR_query_result_row['section'] ;
-				echo '</td></tr>';
-				}
-			}	
-	}
 ?>

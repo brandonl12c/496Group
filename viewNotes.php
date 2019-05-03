@@ -1,36 +1,62 @@
 <!DOCTYPE html>
 
 <head>
-	<?php 
-	include 'functions.php';
-	dbConnect();
 
-	if(isset($_SESSION['userId'])) {
-	$userId = $_SESSION['userId'];
-	}else {
-	  $user = null;
-	  header('Location: ' . "./");
-	}
-	?>
 	<meta charset="utf-8">
+  
+	<?php 
+		include "functions.php"; 
 
-	<title>User Home</title>
+		if(!isset($_SESSION['userId'])){
+			header("Location: " . "./index.php");
+		}
+		if(!isset($_POST['courseId'])){
+			if(isset($_SESSION['courseId'])){
+				$_POST['courseId'] = $_SESSION['courseId'];
+			}else{
+				header("Location: " . "./home.php");
+			}
+		}
+		if(!isset($_POST['noteId'])){
+			if(isset($_SESSION['noteId'])){
+				$_POST['noteId'] = $_SESSION['noteId'];
+				$_SESSION['noteId'] = null;
+			}else{				
+				$_POST['noteId'] = getFirstNote($_POST['courseId']);
+			}
+		}
+	
+	?>
+ 
+	<title>View Notes - Home</title>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 	<link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css.map" >
 	<link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css">
 	<link href="./cssFiles/styleSheet.css" rel="stylesheet">
+  
 
-	<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="./jsFiles/bootstrap/bootstrap.bundle.min.js.map"></script>
-	<script src="./jsFiles/bootstrap/bootstrap.bundle.js.map"></script>
-	<script src="./jsFiles/bootstrap/bootstrap.js"></script>
 
 </head>
 
-    
-<body >
-       <nav class="navbar navbar-expand navbar-dark bg-secondary fixed-top">
+
+<body>
+	<p id="noteName">
+		<?php 
+			echo getNoteName();
+		?>
+	</p>
+	
+		<object data="<?php 
+			echo getNotePath();
+		?>" type="application/pdf">
+        <embed src="<?php 
+			echo getNotePath();
+		?>" type="application/pdf" />
+    </object>
+		
+		
+	
+      <nav class="navbar navbar-expand navbar-dark bg-secondary fixed-top">
 
         <a class="navbar-brand mr-2"  id="title">NoteBox</a>
         <form class="form-inline">
@@ -110,56 +136,68 @@
         </ul>
     
       </nav>
-      
-      <header>
-            <div class="head">
-              <h1>
-                Welcome
-                <?php
-                  get_userName();
-                ?>
-              </h1>
-            </div>
-      </header>
-          
+              
+              <div class="sidenav bg-secondary ">
+                    <a href="#"><?php echo getCourseSection($_POST['courseId']); ?></a>
+                    <?php showNotes($_POST['courseId']); ?>
+					
+                    <div id="mainc">
+                        <button id="addbtn" onclick="openNav2()">Add Notes</button>   
+                        <div id="mySidebar2" class="sidebar2">
+                                <a href="javascript:void(0)" class="closebtn2" onclick="closeNav2()">×</a>
+                                <a id="uploadHeader">Drag and Drop a File or Choose a File</a>
+							<form action="functions.php" method="post" enctype="multipart/form-data">
+                                <input  id="file"  name="file" type="file">
+								<input type="hidden" name="courseId" value="<?php echo $_POST['courseId'] ?>">
+								<input type="submit" name="uploadFile" value="Upload">
+                            </form>
+							
+                              </div>
+                            </div>
+                          </div>
+             
+                  <div id="mainb">
+                    <button class="openbtn" onclick="openNav()">☰ Download</button>  
+                    
+                  </div>
+                  <div id="mySidebar" class="sidebar">
+                      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
 
-          <div class="row" >
-            <div class="card w-50 bg-secondary mb-3 rounded-0" style="width: 18rem;" >
-                 <div class="card-header" id="courseListTxt">
-                   Schools
-                 </div>
-                 <ul class="list-group list-group-flush"  >
-                   <?php showUserSchools($userId); ?>
-                   <li class="list-group-item" href="#" id="add_course_btn">Add a Course</li>
-
-                 </ul>
-               </div>
-        
-               <div class="card w-50 bg-secondary mb-3 rounded-0" style="width: 18rem;" >
-                     <div  class="card-header" id="courseListTxt">
-                       Favorite Notes
-                     </div>
-                     <ul class="list-group list-group-flush"  >
-						<?php showUserNotes($userId); ?>
-
-                     </ul>
-                   </div>
-       
-         </div>
- 
-      
-        </div>
-        <div class="footerDiv">
-          <ul id="footer">
-            <li><a href="./ticket.php">Send Feedback</a></li>
-                <li><a href="./ticket.php">Help</a></li>
-                <li><a href="./FAQ.php">FAQ</a></li>
-                </li>
-         </ul>
-        </div>
- 
-</body>
-
+                      <!--a href="#">Download</a-->
+					  <form action="functions.php" method="post">
+						<input type="hidden" name="noteId" value="<?php echo $_POST['noteId']; ?>">
+						<input type='submit' id='downloadLink' name='downloadFile' value='Download'>
+					  </form>
+					  
+                      </div>
+                  <div class= "comments">
+                  <div class="card h-75 text-white bg-secondary text-right float-right" style="width: 24rem;">
+                    <h3 class="card-header">Comments <i class="fas fa-comment"></i></h3>
+                    <div class="card-body">
+                      <div class="panel-body">
+						<form action='functions.php' method='post'>
+							<input type="hidden" name="noteId" value="<?php echo $_POST['noteId']?>">
+							<input type="hidden" name="courseId" value="<?php echo $_POST['courseId']?>">
+							<textarea class="form-control" name="commentText" placeholder="write a comment..." rows="3"></textarea>
+                        <br>
+							<button type="submit" name="commentSubmit" class="btn btn-outline-warning btn-lg pull-right"><i class="fas fa-comment"></i></button>
+						</form>
+                        <div class="clearfix"></div>
+                        <hr>
+                        <ul class="media-list">
+                            <li class="media">
+                                <div class="media-body">
+                                  <div class="noteComments">
+                                      <ul class="commentList">
+                                          <?php displayComments(); ?>
+                                      </ul>
+                                  </div>
+                    </div>
+                  </div>
+                </div>
+  
+</div>
+</div>
 
 
 
@@ -249,132 +287,13 @@
     
 </div>
 
-
- <!--add course pop-up -->
- <div id="AddCourseModal" class="reqmodal" >
-    <!-- reqModal content -->
-    <div  class="reqmodal-content">
-      <span class="close close1">&times;</span>
-
-      <a style="font-size:28px;">Add a Course</a><br><br>
-
-      <div class="req-form-group">
-
-           <form action="functions.php" method="POST">
-             <div class="reqrow">
-              <div class="req-col-25">
-                <label for="addC_Sch">School</label>
-              </div>
-              <div class="req-col-75">
-              <form action="">
-                <select id="addC_Sch_selection" name="addC_Sch_selection"></select>
-                <form>
-              </div>
-            </div>
-            <div class="reqrow">
-              <div class="req-col-25">
-                <label for="addC_Course">Course</label>
-              </div>
-              <div class="req-col-75">
-                <select id="addC_Course_selection" name="addC_Course_selection"></select>
-                <!-- test show course -->
-                <!-- <div id="txtHint">Courses info will be listed here...</div> -->
-              </div>
-            </div>
-            <br>
-            <div class="reqrow">
-              <input type="submit" name="submit_add_course" value="Add" id="submit_add_course" style="background-color:goldenrod">
-            </div>
-            </form> 
-
-            <?php
-              if(isset($_POST['submit_add_course'])){
-                echo '<script>
-                  var AddCourseModal = document.getElementById("AddCourseModal");
-                  AddCourseModal.style.display = "none";
-                </script>';
-              }
-            ?>
-
-      </div>
-    </div>
-    
-</div>
-
 <script>
-    //Ajax Db get course by school select
-    
-	$(document).ready(function(){
-		
-		var selectedSchool;
-		var selectedCourse;
-		
-		loadSchools();
-		
-		$('#addC_Sch_selection').on('change', function() {
-				loadCourses(this.value);
-		});
-		
-		function loadSchools(){
-			var schools = new Array();
-			$.ajax({
-				type:"POST",
-				url:"functions.php",
-				data:{listSchools: 1},
-				success:function(data){
-					schools = JSON.parse(data);
-					for(var i = 0; i < schools.length; i++){
-						$('#addC_Sch_selection').append(schools[i]);
-					
-						
-					}
-					$("#addC_Sch_selection").val($("#addC_Sch_selection option:first").val());
-					selectedSchool = $('#addC_Sch_selection').val();
-					loadCourses($('#addC_Sch_selection').val());
-				}
-				
-			});		
-		}
-		
-		function loadCourses(school){
-			var courses = new Array();
-			var newHtml = "";
-			
-			console.log(school);
-			
-			$.ajax({
-				type:"POST",
-				url:"functions.php",
-				data:{listCourses: school},
-				success:function(data){
-					try{
-						courses = JSON.parse(data);
-						console.log(courses);
-						for(var i = 0; i < courses.length; i++){
-							newHtml += courses[i];
-						}
-						$("#addC_Course_selection").html(newHtml);
-						$("#addC_Course_selection").val($("#addC_Course_selection option:first").val());
-						selectedCourse = $("#addC_Course_selection").val();
-					}catch(err){
-						console.log(err.message);
-						$("#addC_Course_selection").html("<option value='noCourse' id='added_School'>No Courses Available</option>");
-					}
-				}
-			});
-			
-		}
-	});
-
     // Get the modal
     var modal = document.getElementById('reqModal');
-    var AddCourseModal = document.getElementById('AddCourseModal');
     // Get the button that opens the modal
-    var reqbtn = document.getElementById("getReq");
-    var add_course_btn = document.getElementById("add_course_btn");
+    var reqbtn = document.getElementById("getReq"); 
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
-    var span1 = document.getElementsByClassName("close1")[0];
     var reqSubmit = document.getElementById('reqSubmit');
     // When the user clicks the button, open the modal 
     reqbtn.onclick = function() {
@@ -384,24 +303,15 @@
     span.onclick = function() {
       modal.style.display = "none";
     }
+
+    // reqSubmit.onclick = function() {
+    //   modal.style.display = "none";
+    // }
+
     //clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
       if (event.target == modal) {
         modal.style.display = "none";
-      }
-    }
-
-    add_course_btn.onclick = function() {
-      AddCourseModal.style.display = "block";
-    }
-    //clicks on <span> (x), close the modal
-    span1.onclick = function() {
-      AddCourseModal.style.display = "none";
-    }
-    //clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-      if (event.target == AddCourseModal) {
-        AddCourseModal.style.display = "none";
       }
     }
 
@@ -418,13 +328,9 @@
           reqS_hidden_section.style.display = "none";
           reqC_hidden_section.style.display = "none";
         }
+
     }
 
-    function Crs_dependon_Sch(){
-      var addC_Sch_Slection = document.getElementById("added_School").value;
-      document.getElementById("addC_Course_selection").value;
-      // location.reload();
-    }
     </script>
 
     <style>
@@ -535,7 +441,38 @@
           }
         }
         </style>
-        
+
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="./jsFiles/bootstrap/bootstrap.bundle.min.js.map"></script>
+<script src="./jsFiles/bootstrap/bootstrap.bundle.js.map"></script>
+<script src="./jsFiles/bootstrap/bootstrap.js"></script>
+<script >
+$(".openbtn").click(function openNav(){
+    $("#mySidebar").css("width", "250px");
+    $("#main").css("marginRight", "250px");
+  
+  });
+  
+  $("#addbtn").click(function openNav2(){
+    $("#mySidebar2").css("width", "100%");
+    $("#mainc").css("marginRight", "300px");
+  
+  });
+  
+  $(".closebtn").click(function closeNav(){
+    $("#mySidebar").css("width", "0");
+    $("#main").css("marginRight", "0");
+  
+  });
+  $(".closebtn2").click(function closeNav2(){
+    $("#mySidebar2").css("width", "0");
+    $("#mainc").css("marginRight", "0");
+  
+  });
+  
 
 
+</script>
 </html>

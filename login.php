@@ -1,7 +1,6 @@
 <?php
-include 'logfunctions.php';
+include 'functions.php';
 dbConnect();
-  session_start();
   //set user session with userId
 if(isset($_SESSION['userId'])) {
 	$userId = $_SESSION['userId'];

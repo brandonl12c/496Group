@@ -8,15 +8,14 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css.map" >
   <link rel="stylesheet" href="./cssFiles/bootstrap/bootstrap.min.css">
-  <link href="../Front-end Templates/Front-end Design Templates/cssFiles/styleSheet.css" rel="stylesheet">
+  <link href="./cssFiles/styleSheet.css" rel="stylesheet">
 
 </head>
 
 
 <body>
   
-  <iframe id="viewNotes"src="notes1.jpeg"></iframe>
-    
+ 
         <nav class="navbar navbar-expand navbar-dark bg-secondary fixed-top">
 
                 <a class="navbar-brand mr-2"  id="title">My Notes</a>
@@ -73,61 +72,33 @@
             
               </nav>
               
-              <div class="sidenav bg-secondary ">
-                    <a href="#">CS 496</a>
-                    <a href="#">Lecture 1 Notes</a>
-                    <a href="#">Lecture 2 Notes</a>
-                    <a href="#">Lecture 3 Notes</a>
-                    <div id="mainc">
-                        <button id="addbtn" onclick="openNav2()">Add Notes</button>   
-                        <div id="mySidebar2" class="sidebar2">
-                                <a href="javascript:void(0)" class="closebtn2" onclick="closeNav2()">×</a>
-                                <a id="uploadHeader">Drop and Drag a File or Choose a File</a>
-                                <input  id="upload"  type="file" >
-                            
-                              </div>
-                            </div></div>
-             
-                  <div id="mainb">
-                    <button class="openbtn" onclick="openNav()">☰ Download</button>  
-                    
-                  </div>
-
-<div id="mySidebar" class="sidebar">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-  <a href="#">Download</a>
-  
- 
-</div>
+    <h2 id="msgHD">Messages</h2>
+    <div class="d-flex flex-column h-100">
+    <div class="card  w-75 bg-secondary text-center mx-auto">
+            <div class="card-header">
+              <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
+                <li class="nav-item ">
+                        <a class="nav-link active bg-warning" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">All Messages</a>
+                    </li>
+                <li class="nav-item">
+                        <a class="nav-link active bg-light" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Unread Messages</a>
+                    </li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <p  id ="msgTxt" class="card-text" >Messages</p>
+              <a id="msg" href="#" >Or echo messages here and make them clickable</a>
+            </div>
+          </div>
+          </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="./jsFiles/bootstrap/bootstrap.bundle.min.js.map"></script>
 <script src="./jsFiles/bootstrap/bootstrap.bundle.js.map"></script>
 <script src="./jsFiles/bootstrap/bootstrap.js"></script>
-<script>
-$(".openbtn").click(function openNav(){
-  $("#mySidebar").css("width", "250px");
-  $("#main").css("marginRight", "250px");
+<script src ="./jsFiles/script.js">
 
-});
-
-$("#addbtn").click(function openNav2(){
-  $("#mySidebar2").css("width", "100%");
-  $("#mainc").css("marginRight", "300px");
-
-});
-
-$(".closebtn").click(function closeNav(){
-  $("#mySidebar").css("width", "0");
-  $("#main").css("marginRight", "0");
-
-});
-$(".closebtn2").click(function closeNav2(){
-  $("#mySidebar2").css("width", "0");
-  $("#mainc").css("marginRight", "0");
-
-});
 
 </script>
 </html>

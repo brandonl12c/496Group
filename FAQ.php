@@ -26,56 +26,86 @@
 
 <body>
     <!--Top navigation part-->
-    <nav class="navbar navbar-expand navbar-dark bg-secondary fixed-top">
-        <a class="navbar-brand mr-2" id="title">My Notes</a>
+      <nav class="navbar navbar-expand navbar-dark bg-secondary fixed-top">
+
+        <a class="navbar-brand mr-2"  id="title">NoteBox</a>
         <form class="form-inline">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">School <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Favorites<span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
+                <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                          <a class="nav-link" href="./home.php" style="background-color:goldenrod;">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item active">
+                                <a class="nav-link" href="myNotes.php">MyNotes <span class="sr-only">(current)</span></a>
+                              </li>
+                              <li class="nav-item active">
+                                    <a class="nav-link" href="#">Favorites<span class="sr-only">(current)</span></a>
+                                  </li>
+                        </ul>
         </form>
-        <form class="d-none d-md-inline-block  ml-auto ">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for Notes" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button">
-                        <i class="fa fa-search"></i>
-                     </button>
-                </div>
+
+        <!--  -->
+        <!-- search form -->
+        <script>
+          function search_validate(){
+            var search_input = document.forms["search_form"]["search_keyword"].value;
+              if(search_input == ""){
+                alert("Please Enter a Keyword for search");
+                return false;
+                // window.location.replace("home.php");
+              }
+          }
+        </script>
+        <form class="d-none d-md-inline-block  ml-auto" name = "search_form" onsubmit = "return search_validate()" action="search.php" method="POST">
+          <div class="input-group" >
+            <input type="text" class="form-control" name="search_keyword" id="search_keyword" placeholder="Search for Notes">
+            <div class="input-group-append" >
+                <button type="submit" name="searchBtn" id="searchBtn" class="btn btn-primary" >
+                  <i class="fa fa-search"></i>
+                </button>
             </div>
+          </div>
         </form>
+
+        <script>
+
+        </script>
+
+        <style>
+
+        </style>
+
+    
         <ul class="navbar-nav ml-auto ml-md-0">
-            <li class="nav-item dropdown no-arrow mx-1">
-                <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown">
+          <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" >
                     <i class="fas fa-envelope-square"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#">stuff</a>
-                    <a class="dropdown-item" href="#">more stuff</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown">
-                    <i class="far fa-user"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Help</a>
-                    <a class="dropdown-item" href="#">Feedback</a>
-                    <a class="dropdown-item" href="#">FAQ</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Logout</a>
-                </div>
-            </li>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="#">stuff</a>
+              <a class="dropdown-item" href="#">more stuff</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"  role="button" data-toggle="dropdown" >
+             <i class="far fa-user"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" >
+              <a class="dropdown-item" href="#" id="getReq">School/Course Requests</a>
+              <a class="dropdown-item" href="profile.php" >Profile</a>
+              <a class="dropdown-item" href="ticket.php">Feedback</a>
+              <a class="dropdown-item" href="FAQ.php">FAQ</a>
+
+              <div class="dropdown-divider"></div>
+
+              <!-- <form method="POST" action="home.php"> -->
+              <a class="dropdown-item" href="logout.php" name="logoutBtn" id="logoutBtn">Logout</a>
+              <!-- </form> -->
+
+            </div>
+          </li>
         </ul>
-    </nav>
+    
+      </nav>
     <!--main view -->
     <div class="FAQmain">
 

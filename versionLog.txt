@@ -3,6 +3,43 @@ Project Name: NoteBox
 Members: Brandon Clark, Marlon Moran, Yichun Zhou, Ahmed Mohamed
 Course: CS496
 ---------------------------------------------------------------------------
+VERSION 1.4
+
+CONTRIBUTORS
+        Brandon Clark, Marlon Moran, Yichun Zhou, Ahmed Mohamed
+
+COMMITTER
+        Brandon Clark
+
+DATE
+        May 3rd, 2019
+
+VERSION UPDATE NOTES:
+
+        Brandon
+		- Added functionality to various sections of the webpage including:
+			- tickets
+			- comments
+			- adding favorite schools/courses
+			- fixed issues with file dowloads
+		- php test functions and script
+		- Stylesheet Update 
+
+        Marlon
+		- Front-end testing scripts
+		- Finished filter for search
+		- Stylesheet update
+
+        Joe
+                - Redesigned search page and added PHP
+                - Updated PHP to Nav Bar
+                - Added PHP functions the functions page
+		- Admin Page functionality
+
+        Ahmed
+
+
+---------------------------------------------------------------------------
 VERSION 1.3
 
 CONTRIBUTORS

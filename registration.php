@@ -86,7 +86,7 @@ var disableRegBtn = function(){
     
 <body>
   <?php
-    include 'logfunctions.php';
+    include 'functions.php';
     dbConnect();
     $username = $password =  $email = $Repeatpassword = $Fname = $Lname = "";
   ?>
@@ -161,13 +161,16 @@ var disableRegBtn = function(){
             <p class="d-flex justify-content-left links">Already have an account? <a href="#" onclick="openWinLogin()"><u><b>Sign in</b></u></a>.</p>
            
             <div class="form-group">
-            
+            <span style="color:goldenrod;"><b>
                 <?php
                   if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       registration();
                     }
                 ?> 
-
+                </b>
+              <br>
+            </span>
+            
               <input type="submit" id="regBtn" value="Register" class="btn  login_btn1">
            
             </div>
